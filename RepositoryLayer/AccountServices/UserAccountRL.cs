@@ -90,5 +90,22 @@ namespace RepositoryLayer.Services
             }
             return false;
         }
+
+        public ResponseUserAccount GetUserAccount(ForgetPasswordModel user)
+        {
+            if (UserDB.UserAccounts.Any(U => U.Email.Equals(user.Email)))
+            {
+                return UserDB.UserAccounts.Where(U => U.Email.Equals(user.Email)).Select(U =>
+                    new ResponseUserAccount { 
+                        UserID = U.UserId, 
+                        FirstName = U.FirstName,
+                        LastName = U.LastName,
+                        Email = U.Email }).ToList().First();
+            }               
+            else
+            {
+                throw new UserAccountException(UserAccountException.ExceptionType.EMAIL_DONT_EXIST, "email address is not registered");
+            }
+        }
     }
 }

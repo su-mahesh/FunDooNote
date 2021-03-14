@@ -5,13 +5,13 @@ using System.Security.Claims;
 using BusinessLayer.Interfaces;
 using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
-using FundooNotes.JWTAuthentication;
+using BusinessLayer.JWTAuthentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FundooNotes.Controllers
+namespace BusinessLayer.Controllers
 {
     [ApiController]
     [Route("[controller]")] 
@@ -21,11 +21,11 @@ namespace FundooNotes.Controllers
         readonly IUserAccountBL userAccountBL;
         readonly UserAuthenticationJWT userAuthentication;
 
-        public AccountController(IUserAccountBL userRegistrationsBL, IConfiguration config)
+        public AccountController(IUserAccountBL userAccountBL, IConfiguration config)
         {
             this.config = config;
-            this.userAccountBL = userRegistrationsBL;
             userAuthentication = new UserAuthenticationJWT(this.config);
+            this.userAccountBL = userAccountBL;
         }
        
         [HttpPost("RegisterUser")]
@@ -100,6 +100,28 @@ namespace FundooNotes.Controllers
                     }
                 }
                 return BadRequest(new { success = false, Message = "password change unsuccessfull" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        [HttpPost("ForgetPassword")]
+        public IActionResult ResetForgottenPassword(ForgetPasswordModel forgetPasswordModel)
+        {
+            try
+            {
+                bool result = userAccountBL.SendForgottenPasswordLink(forgetPasswordModel);
+
+                if (result)
+                {
+                    
+                    return Ok(new { success = true, Message = "password reset link has been sent to your email id", email = forgetPasswordModel.Email });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, Message = "email id don't exist" });
+                }
             }
             catch (Exception exception)
             {

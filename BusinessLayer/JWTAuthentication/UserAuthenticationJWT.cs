@@ -7,7 +7,7 @@ using CommonLayer.ResponseModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FundooNotes.JWTAuthentication
+namespace BusinessLayer.JWTAuthentication
 {
     public class UserAuthenticationJWT
     {

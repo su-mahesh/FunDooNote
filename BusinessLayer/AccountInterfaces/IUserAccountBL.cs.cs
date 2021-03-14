@@ -11,5 +11,6 @@ namespace BusinessLayer.Interfaces
         public ResponseUserAccount RegisterUser(RegisterUserAccount user);
         public ResponseUserAccount AthenticateUser(LoginUser user);
         bool ResetAccountPassword(ResetPasswordModel resetPasswordModel);
+        bool SendForgottenPasswordLink(ForgetPasswordModel forgetPasswordModel);
     }
 }

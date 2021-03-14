@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using BusinessLayer.Interfaces;
+using BusinessLayer.JWTAuthentication;
 using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
+using Microsoft.Extensions.Configuration;
 using RepositoryLayer.Interfaces;
 
 namespace BusinessLayer.Services
@@ -11,11 +13,13 @@ namespace BusinessLayer.Services
     public class UserAccountBL : IUserAccountBL
     {
         readonly IUserAccountRL userAccountRL;
+        UserAuthenticationJWT userAuthentication;
         readonly UserDetailValidation userDetailValidation;
-        public UserAccountBL(IUserAccountRL userRegistrationsRL)
+        public UserAccountBL(IUserAccountRL userRegistrationsRL, IConfiguration config)
         {
             this.userAccountRL = userRegistrationsRL;
             userDetailValidation = new UserDetailValidation();
+            userAuthentication = new UserAuthenticationJWT(config);
         }
  
         public ResponseUserAccount RegisterUser(RegisterUserAccount user)
@@ -77,6 +81,17 @@ namespace BusinessLayer.Services
             {
                 throw;
             }
+        }
+
+        public bool SendForgottenPasswordLink(ForgetPasswordModel user)
+        {
+            ResponseUserAccount u = userAccountRL.GetUserAccount(user);
+            if (u != null)
+            {
+                var jwt = userAuthentication.GeneratePasswordResetJWT(u);
+
+            }
+            return false;
         }
     }
 }
