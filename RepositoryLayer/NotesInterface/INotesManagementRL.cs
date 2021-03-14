@@ -8,7 +8,8 @@ namespace RepositoryLayer.NotesInterface
 {
     public interface INotesManagementRL
     {
-        ICollection<NoteModel> GetActiveUserNotes(long UserID);
+        ICollection<NoteModel> GetActiveNotes(long UserID);
         NoteModel AddUserNote(NoteModel note);
+        object GetArchiveNotes(long userID);
     }
 }

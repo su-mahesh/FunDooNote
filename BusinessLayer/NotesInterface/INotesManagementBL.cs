@@ -10,5 +10,6 @@ namespace BusinessLayer.NotesInterface
     {
         ICollection<NoteModel> GetActiveNotes(long UserID);
         public NoteModel AddUserNote(NoteModel note);
+        object GetArchiveNotes(long userID);
     }
 }
