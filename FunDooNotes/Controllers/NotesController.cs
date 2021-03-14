@@ -44,6 +44,29 @@ namespace FundooNotes.Controllers
             {
                 return BadRequest(new { success = false, exception.InnerException });
             }
-        }   
+        }
+
+        [Authorize]
+        [HttpPost("AddNote")]
+        public IActionResult AddUserNote(NoteModel Note)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    Note.UserID = UserID;
+                    NoteModel result = notesManagementBL.AddUserNote(Note);
+                    return Ok(new { success = true, Note = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
     }
 }

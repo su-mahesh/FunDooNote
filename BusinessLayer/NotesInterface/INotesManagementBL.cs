@@ -8,6 +8,7 @@ namespace BusinessLayer.NotesInterface
 {
     public interface INotesManagementBL
     {
-        ICollection<ResponseNoteModel> GetActiveNotes(long UserID);
+        ICollection<NoteModel> GetActiveNotes(long UserID);
+        public NoteModel AddUserNote(NoteModel note);
     }
 }

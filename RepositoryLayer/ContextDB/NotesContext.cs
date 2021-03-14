@@ -37,9 +37,9 @@ namespace RepositoryLayer.ContextDB
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.NoteId).HasColumnName("NoteID");
+                entity.Property(e => e.NoteId).HasColumnName("NoteID").IsRequired();
 
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.Property(e => e.UserId).HasColumnName("UserID").IsRequired();
 
                 entity.HasOne(d => d.Note)
                     .WithMany(p => p.Collaborators)
@@ -55,7 +55,7 @@ namespace RepositoryLayer.ContextDB
 
             modelBuilder.Entity<Label>(entity =>
             {
-                entity.Property(e => e.LabelId).HasColumnName("LabelID");
+                entity.Property(e => e.LabelId).HasColumnName("LabelID").IsRequired(); ;
 
                 entity.Property(e => e.LabelName)
                     .IsRequired()
@@ -103,11 +103,11 @@ namespace RepositoryLayer.ContextDB
 
                 entity.Property(e => e.NoteLabelId).HasColumnName("NoteLabelID");
 
-                entity.Property(e => e.LabelId).HasColumnName("LabelID");
+                entity.Property(e => e.LabelId).HasColumnName("LabelID").IsRequired();
 
-                entity.Property(e => e.NoteId).HasColumnName("NoteID");
+                entity.Property(e => e.NoteId).HasColumnName("NoteID").IsRequired();
 
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.Property(e => e.UserId).HasColumnName("UserID").IsRequired();
 
                 entity.HasOne(d => d.Label)
                     .WithMany(p => p.NoteLabels)

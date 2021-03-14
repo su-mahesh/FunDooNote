@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommonLayer.RequestModel
 {
-    public class ResponseNoteModel
+    public class NoteModel
     {
         public long UserID { get; set; }
         public long NoteID { get; set; }

@@ -15,8 +15,32 @@ namespace BusinessLayer.NotesServices
         {
             NotesManagementRL = notesManagementRL;
         }
-  
-        public ICollection<ResponseNoteModel> GetActiveNotes(long UserID)
+
+        public NoteModel AddUserNote(NoteModel note)
+        {
+            try
+            {
+                if (note.Labels != null)
+                {
+                    note.Labels = note.Labels.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                }
+                if (note.Collaborators != null)
+                {
+                    note.Collaborators = note.Collaborators.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                }
+                if (note.IsTrash || note.IsArchive)
+                {
+                    note.IsPin = false;
+                }
+                return NotesManagementRL.AddUserNote(note);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ICollection<NoteModel> GetActiveNotes(long UserID)
         {
             try
             {
