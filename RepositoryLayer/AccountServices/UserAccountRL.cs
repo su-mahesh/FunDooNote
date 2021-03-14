@@ -45,7 +45,7 @@ namespace RepositoryLayer.Services
                 throw new UserAccountException(UserAccountException.ExceptionType.EMAIL_ALREADY_EXIST, "email id already registered");
             }
         }
-        public ResponseUserAccount GetUserAccount(LoginUser loginUser)
+        public ResponseUserAccount AthenticateUser(LoginUser loginUser)
         {
             if (UserDB.UserAccounts.Any(U => U.Email.Equals(loginUser.Email)))
             {

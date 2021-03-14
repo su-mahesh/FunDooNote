@@ -39,14 +39,14 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-        public ResponseUserAccount GetUserAccount(LoginUser user)
+        public ResponseUserAccount AthenticateUser(LoginUser user)
         {
             try
             {
                 if (userDetailValidation.ValidateEmailAddress(user.Email) &&
                 userDetailValidation.ValidatePassword(user.Password))
                 {
-                    return userAccountRL.GetUserAccount(user);
+                    return userAccountRL.AthenticateUser(user);
                 }
                 else
                 {

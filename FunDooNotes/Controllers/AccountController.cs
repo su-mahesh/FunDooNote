@@ -69,7 +69,7 @@ namespace FundooNotes.Controllers
             }
             try
             {
-                ResponseUserAccount user = userAccountBL.GetUserAccount(loginUser);
+                ResponseUserAccount user = userAccountBL.AthenticateUser(loginUser);
                 if (user != null)
                 {
                     var tokenString = userAuthentication.GenerateSessionJWT(user);
