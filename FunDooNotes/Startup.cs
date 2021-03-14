@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
+using BusinessLayer.NotesInterface;
+using BusinessLayer.NotesServices;
 using BusinessLayer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +20,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.ContextDB;
 using RepositoryLayer.Interfaces;
+using RepositoryLayer.NotesInterface;
+using RepositoryLayer.NotesServises;
 using RepositoryLayer.Services;
 
 namespace FunDooNotes
@@ -38,6 +42,8 @@ namespace FunDooNotes
             options.UseSqlServer(Configuration.GetConnectionString("FunDooNotesConnection")));
             services.AddScoped<IUserAccountRL, UserAccountRL>();
             services.AddScoped<IUserAccountBL, UserAccountBL>();
+            services.AddScoped<INotesManagementRL, NotesManagementRL>();
+            services.AddScoped<INotesManagementBL, NotesManagementBL>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
