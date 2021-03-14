@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RepositoryLayer.ContextDB;
+using RepositoryLayer.Interfaces;
+using RepositoryLayer.Services;
 
 namespace FunDooNotes
 {
@@ -28,7 +32,9 @@ namespace FunDooNotes
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<NotesContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("ConnectionStrings:FunDooNotesConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("FunDooNotesConnection")));
+            services.AddScoped<IUserAccountRL, UserAccountRL>();
+            services.AddScoped<IUserAccountBL, UserAccountBL>();
             services.AddControllers();
         }
 

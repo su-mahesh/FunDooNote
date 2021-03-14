@@ -26,10 +26,10 @@ namespace RepositoryLayer.ContextDB
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+ /*           if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer("name=FunDooNotesConnection");
-            }
+            }*/
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

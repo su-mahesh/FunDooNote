@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using BusinessLayer.Interfaces;
+using CommonLayer.RequestModel;
+using CommonLayer.ResponseModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,14 +16,11 @@ namespace FundooNotes.Controllers
     [Route("[controller]")] 
     public class AccountController : ControllerBase
     {
-       /* IUserAccountBL userAccountBL;
-        private IConfiguration config;
+        readonly IUserAccountBL userAccountBL;
 
-
-        public AccountController(IUserAccountBL userRegistrationsBL, IConfiguration config)
+        public AccountController(IUserAccountBL userRegistrationsBL)
         {
             this.userAccountBL = userRegistrationsBL;
-            this.config = config;
         }
        
         [HttpPost("RegisterUser")]
@@ -56,5 +56,5 @@ namespace FundooNotes.Controllers
             }                     
         }
     
-        */}
+        }
 }
