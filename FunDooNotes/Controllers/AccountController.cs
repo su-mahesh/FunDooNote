@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace FundooNotes.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]")] 
     public class AccountController : ControllerBase
     {
        /* IUserAccountBL userAccountBL;
