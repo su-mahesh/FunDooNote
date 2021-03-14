@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace CommonLayer.RequestModel
+namespace CommonLayer.EmailMessageModel
 {
-    public class ForgetPasswordModel
+    public class ResetLinkEmail
     {
-        [Required]
         public string Email { get; set; }
-
         public string JwtToken { get; set; }
     }
 }
