@@ -39,5 +39,24 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
+        public ResponseUserAccount GetUserAccount(LoginUser user)
+        {
+            try
+            {
+                if (userDetailValidation.ValidateEmailAddress(user.Email) &&
+                userDetailValidation.ValidatePassword(user.Password))
+                {
+                    return userAccountRL.GetUserAccount(user);
+                }
+                else
+                {
+                    throw new UserDetailException(UserDetailException.ExceptionType.ENTERED_INVALID_USER_DETAILS, "user details are details");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

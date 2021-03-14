@@ -24,13 +24,6 @@ namespace RepositoryLayer.ContextDB
         public virtual DbSet<NoteLabel> NoteLabels { get; set; }
         public virtual DbSet<UserAccount> UserAccounts { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
- /*           if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("name=FunDooNotesConnection");
-            }*/
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

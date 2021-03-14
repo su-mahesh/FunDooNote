@@ -9,5 +9,6 @@ namespace RepositoryLayer.Interfaces
     public interface IUserAccountRL
     {
         ResponseUserAccount RegisterUser(RegisterUserAccount user);
+        public ResponseUserAccount GetUserAccount(LoginUser loginUser);
     }
 }

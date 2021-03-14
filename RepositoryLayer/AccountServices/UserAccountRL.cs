@@ -45,8 +45,29 @@ namespace RepositoryLayer.Services
                 throw new UserAccountException(UserAccountException.ExceptionType.EMAIL_ALREADY_EXIST, "email id already registered");
             }
         }
-
-       
-       
+        public ResponseUserAccount GetUserAccount(LoginUser loginUser)
+        {
+            if (UserDB.UserAccounts.Any(U => U.Email.Equals(loginUser.Email)))
+            {
+                string Password = passwordEncryption.EncryptPassword(loginUser.Password);
+                if (UserDB.UserAccounts.FirstOrDefault(u => u.Email == loginUser.Email).Password.Equals(Password))
+                {
+                    ResponseUserAccount User = UserDB.UserAccounts.Where(u => u.Email == loginUser.Email).
+                        Select(u => new ResponseUserAccount { 
+                        UserID = u.UserId,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Email = u.Email,
+                        }).ToList().First();
+                    return User;
+                }
+                else
+                    throw new UserAccountException(UserAccountException.ExceptionType.WRONG_PASSWORD, "wrong password");
+            }
+            else
+            {
+                throw new UserAccountException(UserAccountException.ExceptionType.EMAIL_DONT_EXIST, "email address is not registered");
+            }
+        }
     }
 }
