@@ -44,7 +44,8 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                return NotesManagementRL.GetActiveNotes(UserID);
+                ICollection<NoteModel> result = NotesManagementRL.GetNotes(UserID, false, false);
+                return result;
             }
             catch (Exception)
             {
@@ -52,11 +53,23 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public object GetArchiveNotes(long UserID)
+        public ICollection<NoteModel> GetArchiveNotes(long UserID)
         {
             try
             {
-                return NotesManagementRL.GetArchiveNotes(UserID);
+                return NotesManagementRL.GetNotes(UserID, false, true);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ICollection<NoteModel> GetTrashNotes(long UserID)
+        {
+            try
+            {
+                return NotesManagementRL.GetNotes(UserID, true, false);
             }
             catch (Exception)
             {

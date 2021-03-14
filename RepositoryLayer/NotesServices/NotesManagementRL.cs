@@ -80,13 +80,12 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
-        public ICollection<NoteModel> GetActiveNotes(long UserID)
+         public ICollection<NoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve)
         {
             try
             {
-                responseNoteModels = NotesDB.Notes.Where(N => N.UserId.Equals(UserID)
-                && N.IsTrash == false && N.IsArchive == false).Select(N =>
+                responseNoteModels = NotesDB.Notes.Where(N => N.UserId.Equals(UserID) 
+                && N.IsTrash == IsTrash && N.IsArchive == IsArchieve).Select(N =>
                     new NoteModel
                     {
                         UserID = (long)N.UserId,
@@ -102,37 +101,6 @@ namespace RepositoryLayer.NotesServises
                         IsTrash = N.IsTrash,
                         Labels = N.NoteLabels.Select(N => N.Label.LabelName).ToList(),
                         Collaborators = N.Collaborators.Select(C => C.CollaboratorEmail ).ToList()
-                    }
-                    ).ToList();
-                return responseNoteModels;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public object GetArchiveNotes(long UserID)
-        {
-            try
-            {
-                responseNoteModels = NotesDB.Notes.Where(N => N.UserId.Equals(UserID)
-                && N.IsTrash == false && N.IsArchive == true).Select(N =>
-                    new NoteModel
-                    {
-                        UserID = (long)N.UserId,
-                        NoteID = N.NoteId,
-                        Title = N.Title,
-                        Text = N.Text,
-                        CreatedOn = N.CreatedOn,
-                        ReminderOn = N.ReminderOn,
-                        BackgroundColor = N.BackgroundColor,
-                        BackgroundImage = N.BackgroundImage,
-                        IsArchive = N.IsArchive,
-                        IsPin = N.IsPin,
-                        IsTrash = N.IsTrash,
-                        Labels = N.NoteLabels.Select(N => N.Label.LabelName).ToList(),
-                        Collaborators = N.Collaborators.Select(C => C.CollaboratorEmail).ToList()
                     }
                     ).ToList();
                 return responseNoteModels;
