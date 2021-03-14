@@ -58,5 +58,25 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
+
+        public bool ResetAccountPassword(ResetPasswordModel user)
+        {
+            try
+            {
+                if (user.NewPassword.Equals(user.ConfirmNewPassword) &&
+                    userDetailValidation.ValidatePassword(user.NewPassword))
+                {
+                    return userAccountRL.ResetAccountPassword(user);
+                }
+                else
+                {
+                    throw new UserDetailException(UserDetailException.ExceptionType.CONFIRM_PASSWORD_DO_NO_MATCH, "New and comfirm password do not match");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -69,5 +69,26 @@ namespace RepositoryLayer.Services
                 throw new UserAccountException(UserAccountException.ExceptionType.EMAIL_DONT_EXIST, "email address is not registered");
             }
         }
+
+        public bool ResetAccountPassword(ResetPasswordModel user)
+        {
+            try
+            {
+                var NewPassword = passwordEncryption.EncryptPassword(user.NewPassword);
+                var LoginUser = UserDB.UserAccounts.FirstOrDefault(u => u.Email.Equals(user.Email));
+                if (user != null)
+                {
+                    LoginUser.Password = NewPassword;
+                    UserDB.Entry(LoginUser).Property(x => x.Password).IsModified = true;
+                    UserDB.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return false;
+        }
     }
 }

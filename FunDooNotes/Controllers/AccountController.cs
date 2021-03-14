@@ -40,15 +40,7 @@ namespace FundooNotes.Controllers
                 ResponseUserAccount result = userAccountBL.RegisterUser(user);               
                 if (result != null)
                 {
-                    var NewUser = new
-                    {
-                        result.UserID,
-                        result.FirstName,
-                        result.LastName,
-                        result.Email
-                    };
-
-                    return Ok(new { success = true, Message = "User Registration Successful", user = NewUser });
+                    return Ok(new { success = true, Message = "User Registration Successful", user = result });
                 }
                 else
                 {
@@ -82,6 +74,32 @@ namespace FundooNotes.Controllers
                     });
                 }
                 return BadRequest(new { success = false, Message = "User Login Unsuccessful" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("ResetPassword")]
+        public IActionResult ResetPassword(ResetPasswordModel resetPasswordModel)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    var Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
+                    resetPasswordModel.Email = Email;
+                    bool result = userAccountBL.ResetAccountPassword(resetPasswordModel);
+                    if (result)
+                    {
+                        return Ok(new { success = true, Message = "password changed successfully" });
+                    }
+                }
+                return BadRequest(new { success = false, Message = "password change unsuccessfull" });
             }
             catch (Exception exception)
             {

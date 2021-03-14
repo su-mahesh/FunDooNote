@@ -10,5 +10,6 @@ namespace RepositoryLayer.Interfaces
     {
         ResponseUserAccount RegisterUser(RegisterUserAccount user);
         public ResponseUserAccount AthenticateUser(LoginUser loginUser);
+        bool ResetAccountPassword(ResetPasswordModel user);
     }
 }
