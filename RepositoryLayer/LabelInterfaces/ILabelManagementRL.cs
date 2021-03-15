@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
 
 namespace RepositoryLayer.LabelInterfeces
@@ -9,5 +10,6 @@ namespace RepositoryLayer.LabelInterfeces
         bool DeleteUserLabel(long userID, long labelID);
         bool ChangeLabelName(long userID, long labelID, string labelName);
         bool AddUserLabel(long userID, string labelName);
+        public ICollection<ResponseNoteModel> GetLabelNotes(long userID, string labelName);
     }
 }

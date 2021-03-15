@@ -16,7 +16,7 @@ namespace BusinessLayer.NotesServices
             NotesManagementRL = notesManagementRL;
         }
 
-        public NoteModel AddUserNote(NoteModel note)
+        public ResponseNoteModel AddUserNote(ResponseNoteModel note)
         {
             try
             {
@@ -53,11 +53,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<NoteModel> GetActiveNotes(long UserID)
+        public ICollection<ResponseNoteModel> GetActiveNotes(long UserID)
         {
             try
             {
-                ICollection<NoteModel> result = NotesManagementRL.GetNotes(UserID, false, false);
+                ICollection<ResponseNoteModel> result = NotesManagementRL.GetNotes(UserID, false, false);
                 return result;
             }
             catch (Exception)
@@ -66,7 +66,7 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<NoteModel> GetArchiveNotes(long UserID)
+        public ICollection<ResponseNoteModel> GetArchiveNotes(long UserID)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<NoteModel> GetReminderNotes(long UserID)
+        public ICollection<ResponseNoteModel> GetReminderNotes(long UserID)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<NoteModel> GetTrashNotes(long UserID)
+        public ICollection<ResponseNoteModel> GetTrashNotes(long UserID)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace BusinessLayer.NotesServices
                 throw;
             }
         }
-        public NoteModel UpdateNote(NoteModel note)
+        public ResponseNoteModel UpdateNote(ResponseNoteModel note)
         {
             try
             {

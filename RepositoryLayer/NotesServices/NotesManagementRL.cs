@@ -12,13 +12,13 @@ namespace RepositoryLayer.NotesServises
     public class NotesManagementRL : INotesManagementRL
     {
         readonly NotesContext NotesDB;
-        ICollection<NoteModel> responseNoteModels;
+        ICollection<ResponseNoteModel> responseNoteModels;
         public NotesManagementRL(NotesContext notesDB)
         {
             NotesDB = notesDB;
         }
 
-        public NoteModel AddUserNote(NoteModel note)
+        public ResponseNoteModel AddUserNote(ResponseNoteModel note)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace RepositoryLayer.NotesServises
                         new Collaborator { UserId = NewNote.UserId, NoteId = NewNote.NoteId, CollaboratorEmail = C }));
                     NotesDB.SaveChanges();
                 }
-                var NewResponseNote = new NoteModel
+                var NewResponseNote = new ResponseNoteModel
                 {
                     UserID = (long)NewNote.UserId,
                     NoteID = NewNote.NoteId,
@@ -108,13 +108,13 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
-        public ICollection<NoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve)
+        public ICollection<ResponseNoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve)
         {
             try
             {
                 responseNoteModels = NotesDB.Notes.Where(N => N.UserId.Equals(UserID) 
                 && N.IsTrash == IsTrash && N.IsArchive == IsArchieve).OrderBy(N => N.CreatedOn).Select(N =>
-                    new NoteModel
+                    new ResponseNoteModel
                     {
                         UserID = (long)N.UserId,
                         NoteID = N.NoteId,
@@ -138,13 +138,13 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
-        public ICollection<NoteModel> GetReminderNotes(long UserID)
+        public ICollection<ResponseNoteModel> GetReminderNotes(long UserID)
         {
             try
             {
                 responseNoteModels = NotesDB.Notes.Where(N => N.UserId.Equals(UserID)
                 && N.IsTrash == false && N.ReminderOn > DateTime.Now).OrderBy(N => N.ReminderOn).Select(N =>
-                    new NoteModel
+                    new ResponseNoteModel
                     {
                         UserID = (long)N.UserId,
                         NoteID = N.NoteId,
@@ -233,7 +233,7 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
-        public NoteModel UpdateNote(NoteModel Note)
+        public ResponseNoteModel UpdateNote(ResponseNoteModel Note)
         {
             try
             {
@@ -279,7 +279,7 @@ namespace RepositoryLayer.NotesServises
                     NotesDB.SaveChanges();
                 }
                 var NewResponseNote = NotesDB.Notes.Where(N => N.NoteId == Note.NoteID).Select(N =>
-                    new NoteModel
+                    new ResponseNoteModel
                     {
                         UserID = (long)N.UserId,
                         NoteID = N.NoteId,

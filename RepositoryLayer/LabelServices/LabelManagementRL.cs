@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
 using RepositoryLayer.ContextDB;
 using RepositoryLayer.Models;
@@ -102,6 +103,33 @@ namespace RepositoryLayer.LabelInterfeces
 
                 throw;
             }
+        }
+
+        public ICollection<ResponseNoteModel> GetLabelNotes(long userID, string labelName)
+        {
+            if (NotesDB.NoteLabels.Any(L => L.UserId == userID && L.Label.LabelName == labelName))
+            {
+                return NotesDB.NoteLabels.
+               Where(NL => NL.Note.UserId == userID && NL.Label.LabelName == labelName).
+               Select(N =>
+               new ResponseNoteModel
+               {
+                   UserID = (long)N.UserId,
+                   NoteID = (long)N.NoteId,
+                   Title = N.Note.Title,
+                   Text = N.Note.Text,
+                   ReminderOn = N.Note.ReminderOn,
+                   BackgroundColor = N.Note.BackgroundColor,
+                   BackgroundImage = N.Note.BackgroundImage,
+                   IsArchive = N.Note.IsArchive,
+                   IsPin = N.Note.IsPin,
+                   IsTrash = N.Note.IsTrash,
+                   Labels = N.Note.NoteLabels.Select(N => N.Label.LabelName).ToList(),
+                   Collaborators = N.Note.Collaborators.Select(C => C.CollaboratorEmail).ToList()
+               }
+               ).ToList();
+            }
+            return null;
         }
     }
 }

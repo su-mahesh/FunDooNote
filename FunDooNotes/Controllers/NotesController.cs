@@ -48,7 +48,7 @@ namespace FundooNotes.Controllers
         
         [Authorize]
         [HttpPost("AddNote")]
-        public IActionResult AddUserNote(NoteModel Note)
+        public IActionResult AddUserNote(ResponseNoteModel Note)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Note.UserID = UserID;
-                    NoteModel result = notesManagementBL.AddUserNote(Note);
+                    ResponseNoteModel result = notesManagementBL.AddUserNote(Note);
                     return Ok(new { success = true, Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -162,7 +162,7 @@ namespace FundooNotes.Controllers
         }
         [Authorize]
         [HttpPut("Update")]
-        public IActionResult UpdateNote(NoteModel Note)
+        public IActionResult UpdateNote(ResponseNoteModel Note)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Note.UserID = UserID;
-                    NoteModel result = notesManagementBL.UpdateNote(Note);
+                    ResponseNoteModel result = notesManagementBL.UpdateNote(Note);
                     return Ok(new { success = true, Message =  "note updated", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
 using LabelInterfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -66,6 +67,7 @@ namespace FunDooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        [Authorize]
         [HttpPatch("Edit/{LabelID}/{LabelName}")]
         public IActionResult ChangeLabelName(long LabelID, string LabelName)
         {
@@ -87,6 +89,7 @@ namespace FunDooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        [Authorize]
         [HttpPost("Add/{LabelName}")]
         public IActionResult AddUserLabel(string LabelName)
         {
@@ -100,6 +103,28 @@ namespace FunDooNotes.Controllers
 
                     bool result = labelManagementBL.AddUserLabel(UserID, LabelName);
                     return Ok(new { success = true, user = Email, LabelAdded = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        [Authorize]
+        [HttpGet("{LabelName}")]
+        public IActionResult GetLabelNotes(string LabelName)
+        {
+            try
+            {
+                if (User.Identity is ClaimsIdentity identity)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
+                    ICollection<ResponseNoteModel> result = labelManagementBL.GetLabelNotes(UserID, LabelName);
+                  
+                    return Ok(new { success = true, user = Email, notes = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
             }

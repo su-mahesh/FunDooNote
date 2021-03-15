@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
 using LabelInterfaces;
 using RepositoryLayer.LabelInterfeces;
@@ -45,6 +46,18 @@ namespace BusinessLayer.LabelServices
             try
             {
                 return labelManagementRL.DeleteUserLabel(userID, labelID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ICollection<ResponseNoteModel> GetLabelNotes(long userID, string labelName)
+        {
+            try
+            {
+                return labelManagementRL.GetLabelNotes(userID, labelName);
             }
             catch (Exception)
             {
