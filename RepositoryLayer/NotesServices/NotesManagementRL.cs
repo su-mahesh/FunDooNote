@@ -170,61 +170,65 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
-        public NoteModel UpdateNote(NoteModel note)
+        public NoteModel UpdateNote(NoteModel Note)
         {
             try
             {
-                var NewNote = new Note
+                var UpdateNote = NotesDB.Notes.FirstOrDefault(N => N.NoteId == Note.NoteID && N.UserId == Note.UserID);
+                if (UpdateNote != null)
                 {
-                    NoteId = note.NoteID,
-                    UserId = note.UserID,
-                    Title = note.Title,
-                    Text = note.Text,
-                    ReminderOn = note.ReminderOn,
-                    BackgroundColor = note.BackgroundColor,
-                    BackgroundImage = note.BackgroundImage,
-                    IsArchive = note.IsArchive,
-                    IsPin = note.IsPin,
-                    IsTrash = note.IsTrash,
-                };
-                NotesDB.Notes.Update(NewNote);
-                NotesDB.SaveChanges();
+                    UpdateNote.Title = Note.Title;
+                    UpdateNote.Text = Note.Text;
+                    UpdateNote.ReminderOn = Note.ReminderOn;
+                    UpdateNote.BackgroundColor = Note.BackgroundColor;
+                    UpdateNote.BackgroundImage = Note.BackgroundImage;
+                    UpdateNote.IsArchive = Note.IsArchive;
+                    UpdateNote.IsPin = Note.IsPin;
+                    UpdateNote.IsTrash = Note.IsTrash;
+                }
 
-                if (note.Labels != null)
+                NotesDB.SaveChanges();
+                NotesDB.NoteLabels.RemoveRange(NotesDB.NoteLabels.Where(L => L.NoteId == Note.NoteID).ToList());
+                NotesDB.SaveChanges();
+                if (Note.Labels != null)
                 {
-                    note.Labels.ToList().ForEach(L =>
-                    NotesDB.Set<Label>().AddIfNotExists(new Label { UserId = NewNote.UserId, LabelName = L }, x => x.LabelName.Equals(L)));
+                    Note.Labels.ToList().ForEach(L =>
+                    NotesDB.Set<Label>().AddIfNotExists(new Label { UserId = Note.UserID, LabelName = L }, x => x.LabelName.Equals(L)));
                     NotesDB.SaveChanges();
-                    note.Labels.ToList().ForEach(L => NotesDB.NoteLabels.Update(
+                    Note.Labels.ToList().ForEach(L =>
+                    NotesDB.NoteLabels.Add(
                         new NoteLabel
                         {
-                            NoteId = NewNote.NoteId,
+                            NoteId = Note.NoteID,
                             LabelId = NotesDB.Labels.FirstOrDefault(a => a.LabelName == L).LabelId
                         }));
                 }
-                if (note.Collaborators != null)
+                NotesDB.Collaborators.RemoveRange(NotesDB.Collaborators.Where(L => L.NoteId == Note.NoteID).ToList());
+                NotesDB.SaveChanges();
+                if (Note.Collaborators != null)
                 {
-                    note.Collaborators.ToList().ForEach(C =>
-                    NotesDB.Collaborators.Update(
-                        new Collaborator { UserId = NewNote.UserId, NoteId = NewNote.NoteId, CollaboratorEmail = C }));
+                   Note.Collaborators.ToList().ForEach(C =>
+                   NotesDB.Collaborators.Add(
+                        new Collaborator { UserId = Note.UserID, NoteId = Note.NoteID, CollaboratorEmail = C }));
                     NotesDB.SaveChanges();
                 }
-                var NewResponseNote = new NoteModel
-                {
-                    UserID = (long)NewNote.UserId,
-                    NoteID = NewNote.NoteId,
-                    Title = NewNote.Title,
-                    Text = NewNote.Text,
-                    CreatedOn = NewNote.CreatedOn,
-                    ReminderOn = NewNote.ReminderOn,
-                    BackgroundColor = NewNote.BackgroundColor,
-                    BackgroundImage = NewNote.BackgroundImage,
-                    IsArchive = NewNote.IsArchive,
-                    IsPin = NewNote.IsPin,
-                    IsTrash = NewNote.IsTrash,
-                    Labels = NewNote.NoteLabels.Select(N => N.Label.LabelName).ToList(),
-                    Collaborators = NewNote.Collaborators.Select(C => C.CollaboratorEmail).ToList()
-                };
+                var NewResponseNote = NotesDB.Notes.Where(N => N.NoteId == Note.NoteID).Select(N =>
+                    new NoteModel
+                    {
+                        UserID = (long)N.UserId,
+                        NoteID = N.NoteId,
+                        Title = N.Title,
+                        Text = N.Text,
+                        ReminderOn = N.ReminderOn,
+                        BackgroundColor = N.BackgroundColor,
+                        BackgroundImage = N.BackgroundImage,
+                        IsArchive = N.IsArchive,
+                        IsPin = N.IsPin,
+                        IsTrash = N.IsTrash,
+                        Labels = N.NoteLabels.Select(N => N.Label.LabelName).ToList(),
+                        Collaborators = N.Collaborators.Select(C => C.CollaboratorEmail).ToList()
+                    }
+                    ).ToList().First();
                 return NewResponseNote;
             }
             catch (Exception)

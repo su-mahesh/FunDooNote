@@ -121,8 +121,7 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
+                if (User.Identity is ClaimsIdentity identity)
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
@@ -153,6 +152,28 @@ namespace FundooNotes.Controllers
 
                     var result = notesManagementBL.GetReminderNotes(UserID);
                     return Ok(new { success = true, user = Email, Notes = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        [Authorize]
+        [HttpPut("Update")]
+        public IActionResult UpdateNote(NoteModel Note)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    Note.UserID = UserID;
+                    NoteModel result = notesManagementBL.UpdateNote(Note);
+                    return Ok(new { success = true, Message =  "note updated", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
             }
