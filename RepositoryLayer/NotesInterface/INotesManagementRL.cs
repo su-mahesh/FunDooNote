@@ -10,6 +10,6 @@ namespace RepositoryLayer.NotesInterface
     {
         public ICollection<NoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve);
         public NoteModel AddUserNote(NoteModel note);
-
+        bool DeleteNote(long noteID);
     }
 }

@@ -40,6 +40,19 @@ namespace BusinessLayer.NotesServices
             }
         }
 
+        public bool DeleteNote(long noteID)
+        {
+            try
+            {
+                bool result = NotesManagementRL.DeleteNote(noteID);
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public ICollection<NoteModel> GetActiveNotes(long UserID)
         {
             try

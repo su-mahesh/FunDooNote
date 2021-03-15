@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CommonLayer.RequestModel;
+using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.ContextDB;
 using RepositoryLayer.Models;
 using RepositoryLayer.NotesInterface;
@@ -80,7 +81,36 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-         public ICollection<NoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve)
+
+        public bool DeleteNote(long noteID)
+        {
+            try
+            {
+                if (NotesDB.Notes.Any(n => n.NoteId == noteID))
+                {
+                   var note = NotesDB.Notes.Find(noteID );
+                    if (note.IsTrash)
+                    {
+                        NotesDB.Entry(note).State = EntityState.Deleted;
+                    }
+                    else
+                    {
+                        note.IsTrash = true;
+                        note.IsPin = false;
+                        note.IsArchive = false;
+                    }
+                    NotesDB.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public ICollection<NoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve)
         {
             try
             {
