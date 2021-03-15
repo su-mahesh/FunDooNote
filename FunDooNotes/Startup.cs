@@ -1,25 +1,23 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
+using BusinessLayer.LabelServices;
 using BusinessLayer.NotesInterface;
 using BusinessLayer.NotesServices;
 using BusinessLayer.Services;
+using LabelInterfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.ContextDB;
 using RepositoryLayer.Interfaces;
+using RepositoryLayer.LabelInterfeces;
 using RepositoryLayer.NotesInterface;
 using RepositoryLayer.NotesServises;
 using RepositoryLayer.Services;
@@ -44,6 +42,8 @@ namespace FunDooNotes
             services.AddScoped<IUserAccountBL, UserAccountBL>();
             services.AddScoped<INotesManagementRL, NotesManagementRL>();
             services.AddScoped<INotesManagementBL, NotesManagementBL>();
+            services.AddScoped<ILabelManagementBL, LabelManagementBL>();
+            services.AddScoped<ILabelManagementRL, LabelManagementRL>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
