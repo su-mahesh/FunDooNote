@@ -160,5 +160,26 @@ namespace BusinessLayer.NotesServices
                 throw;
             }
         }
+
+        public bool SetNoteReminder(NoteReminder reminder)
+        {
+            try
+            {
+                if (reminder.ReminderOn < DateTime.Now)
+                {
+                    throw new Exception("Time is passed");
+                }
+                if (reminder.NoteID == default)
+                {
+                    throw new Exception("NoteID missing");
+                }
+                return NotesManagementRL.SetNoteReminder(reminder);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }           
+        }
     }
 }

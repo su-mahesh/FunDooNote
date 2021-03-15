@@ -305,5 +305,21 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
+
+        public bool SetNoteReminder(NoteReminder reminder)
+        {
+            try
+            {
+                NotesDB.Notes.FirstOrDefault(
+                    N => N.NoteId == reminder.NoteID && N.UserId == reminder.UserID).ReminderOn = reminder.ReminderOn;
+                NotesDB.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -215,7 +215,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     bool result = notesManagementBL.ToggleArchive(NoteID, UserID);
-                    return Ok(new { success = true, Message = "note pin toggled", Note = result });
+                    return Ok(new { success = true, Message = "note archive toggled", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
             }
@@ -226,7 +226,7 @@ namespace FundooNotes.Controllers
         }
         [Authorize]
         [HttpPatch("Color/{NoteID}/{ColorCode}")]
-        public IActionResult ChangeColor(long NoteID, string ColorCode)
+        public IActionResult ChangeNoteBackgroundColor(long NoteID, string ColorCode)
         {
             try
             {
@@ -236,7 +236,29 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     bool result = notesManagementBL.ChangeBackgroundColor(NoteID, UserID, ColorCode);
-                    return Ok(new { success = true, Message = "note pin toggled", Note = result });
+                    return Ok(new { success = true, Message = "note background color changed", Note = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        [Authorize]
+        [HttpPatch("SetReminder")]
+        public IActionResult ChangeColor(NoteReminder Reminder)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    Reminder.UserID = UserID;
+                    bool result = notesManagementBL.SetNoteReminder(Reminder);
+                    return Ok(new { success = true, Message = "note reminder added", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
             }

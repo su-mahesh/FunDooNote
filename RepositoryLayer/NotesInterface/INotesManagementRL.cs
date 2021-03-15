@@ -16,5 +16,6 @@ namespace RepositoryLayer.NotesInterface
         bool ToggleNotePin(long noteID, long userID);
         bool ToggleArchive(long noteID, long userID);
         bool ChangeBackgroundColor(long noteID, long userID, string colorCode);
+        bool SetNoteReminder(NoteReminder reminder);
     }
 }
