@@ -170,6 +170,29 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
+        public bool ToggleNotePin(long noteID, long userID)
+        {
+            try
+            {
+                var note = NotesDB.Notes.FirstOrDefault(N => N.NoteId == noteID && N.UserId == userID);
+                if (note.IsPin)
+                {
+                    note.IsPin = false;
+                }
+                else
+                {
+                    note.IsPin = true;
+                }
+                NotesDB.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public NoteModel UpdateNote(NoteModel Note)
         {
             try

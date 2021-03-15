@@ -102,6 +102,18 @@ namespace BusinessLayer.NotesServices
             }
         }
 
+        public bool ToggleNotePin(long noteID, long userID)
+        {
+            try
+            {
+                return NotesManagementRL.ToggleNotePin(noteID,userID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public NoteModel UpdateNote(NoteModel note)
         {
             try

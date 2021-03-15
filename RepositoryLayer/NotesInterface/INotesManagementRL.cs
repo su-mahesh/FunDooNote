@@ -13,5 +13,6 @@ namespace RepositoryLayer.NotesInterface
         bool DeleteNote(long UserID, long noteID);
         NoteModel UpdateNote(NoteModel note);
         ICollection<NoteModel> GetReminderNotes(long userID);
+        bool ToggleNotePin(long noteID, long userID);
     }
 }

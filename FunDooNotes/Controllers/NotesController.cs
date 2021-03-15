@@ -182,5 +182,26 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        [Authorize]
+        [HttpPatch("Pin/{NoteID}")]
+        public IActionResult TogglePin(long NoteID)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    bool result = notesManagementBL.ToggleNotePin(NoteID, UserID);
+                    return Ok(new { success = true, Message = "note pin toggled", Note = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
     }
 }
