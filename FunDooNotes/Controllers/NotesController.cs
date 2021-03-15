@@ -203,5 +203,26 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        [Authorize]
+        [HttpPatch("Archive/{NoteID}")]
+        public IActionResult ToggleArchive(long NoteID)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    bool result = notesManagementBL.ToggleArchive(NoteID, UserID);
+                    return Ok(new { success = true, Message = "note pin toggled", Note = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
     }
 }

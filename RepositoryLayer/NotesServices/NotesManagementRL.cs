@@ -170,6 +170,29 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
+        public bool ToggleArchive(long noteID, long userID)
+        {
+            try
+            {
+                var note = NotesDB.Notes.FirstOrDefault(N => N.NoteId == noteID && N.UserId == userID);
+                if (note.IsArchive)
+                {
+                    note.IsArchive = false;
+                }
+                else
+                {
+                    note.IsArchive = true;
+                }
+                NotesDB.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public bool ToggleNotePin(long noteID, long userID)
         {
             try
@@ -258,7 +281,7 @@ namespace RepositoryLayer.NotesServises
                     ).ToList().First();
                 return NewResponseNote;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }

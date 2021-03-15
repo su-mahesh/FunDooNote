@@ -102,6 +102,18 @@ namespace BusinessLayer.NotesServices
             }
         }
 
+        public bool ToggleArchive(long noteID, long userID)
+        {
+            try
+            {
+                return NotesManagementRL.ToggleArchive(noteID, userID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public bool ToggleNotePin(long noteID, long userID)
         {
             try
