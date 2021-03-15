@@ -15,6 +15,29 @@ namespace RepositoryLayer.LabelInterfeces
             NotesDB = notesDB;
         }
 
+        public bool AddUserLabel(long userID, string labelName)
+        {
+            try
+            {
+                if (!NotesDB.Labels.Any(N => N.UserId == userID && N.LabelName == labelName))
+                {
+                    NotesDB.Labels.Add(new Label {UserId = userID, LabelName = labelName });
+                    NotesDB.SaveChanges();
+                    return true;                  
+                }
+                else
+                {
+                    throw new Exception("Label already exist");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return false;
+        }
+
         public bool ChangeLabelName(long userID, long labelID, string labelName)
         {
             try

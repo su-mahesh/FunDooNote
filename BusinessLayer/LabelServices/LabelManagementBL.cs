@@ -16,6 +16,18 @@ namespace BusinessLayer.LabelServices
             this.labelManagementRL = labelManagementRL;
         }
 
+        public bool AddUserLabel(long userID, string labelName)
+        {
+            try
+            {
+                return labelManagementRL.AddUserLabel(userID, labelName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public bool ChangeLabelName(long userID, long labelID, string labelName)
         {
             try
