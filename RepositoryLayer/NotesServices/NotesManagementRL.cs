@@ -7,8 +7,6 @@ using RepositoryLayer.ContextDB;
 using RepositoryLayer.Models;
 using RepositoryLayer.NotesInterface;
 
-
-
 namespace RepositoryLayer.NotesServises
 {
     public class NotesManagementRL : INotesManagementRL

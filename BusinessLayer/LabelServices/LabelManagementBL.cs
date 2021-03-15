@@ -16,6 +16,18 @@ namespace BusinessLayer.LabelServices
             this.labelManagementRL = labelManagementRL;
         }
 
+        public bool ChangeLabelName(long userID, long labelID, string labelName)
+        {
+            try
+            {
+                return labelManagementRL.ChangeLabelName(userID, labelID, labelName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public bool DeleteUserLabel(long userID, long labelID)
         {
             try

@@ -27,8 +27,7 @@ namespace FunDooNotes.Controllers
         {
             try
             {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
+                if (User.Identity is ClaimsIdentity identity)
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
@@ -51,14 +50,34 @@ namespace FunDooNotes.Controllers
         {
             try
             {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
+                if (User.Identity is ClaimsIdentity identity)
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
 
                     bool result = labelManagementBL.DeleteUserLabel(UserID, LabelID);
+                    return Ok(new { success = true, user = Email, Labels = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.InnerException });
+            }
+        }
+        [HttpPatch("Edit/{LabelID}/{LabelName}")]
+        public IActionResult ChangeLabelName(long LabelID, string LabelName)
+        {
+            try
+            {
+                if (User.Identity is ClaimsIdentity identity)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
+
+                    bool result = labelManagementBL.ChangeLabelName(UserID, LabelID, LabelName);
                     return Ok(new { success = true, user = Email, Labels = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });

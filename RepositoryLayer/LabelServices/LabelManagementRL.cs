@@ -15,6 +15,25 @@ namespace RepositoryLayer.LabelInterfeces
             NotesDB = notesDB;
         }
 
+        public bool ChangeLabelName(long userID, long labelID, string labelName)
+        {
+            try
+            {
+                if (NotesDB.Labels.Any(N => N.UserId == userID && N.LabelId == labelID))
+                {
+                    NotesDB.Labels.First(N => N.LabelId == labelID).LabelName = labelName;
+                    NotesDB.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public bool DeleteUserLabel(long userID, long labelID)
         {
             try
