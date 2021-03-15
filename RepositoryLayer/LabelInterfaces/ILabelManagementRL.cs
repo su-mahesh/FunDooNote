@@ -5,6 +5,7 @@ namespace RepositoryLayer.LabelInterfeces
 {
     public interface ILabelManagementRL
     {
-        ICollection<Label> GetUserLabels(long userID);
+        ICollection<ResponseLabel> GetUserLabels(long userID);
+        bool DeleteUserLabel(long userID, long labelID);
     }
 }

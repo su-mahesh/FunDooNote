@@ -5,6 +5,7 @@ namespace LabelInterfaces
 {
     public interface ILabelManagementBL
     {
-        ICollection<Label> GetUserLabels(long userID);
+        ICollection<ResponseLabel> GetUserLabels(long userID);
+        bool DeleteUserLabel(long userID, long labelID);
     }
 }

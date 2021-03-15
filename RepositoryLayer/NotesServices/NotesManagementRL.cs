@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.ContextDB;
 using RepositoryLayer.Models;
 using RepositoryLayer.NotesInterface;
-using RepositoryLayer.NotesServices;
+
 
 
 namespace RepositoryLayer.NotesServises

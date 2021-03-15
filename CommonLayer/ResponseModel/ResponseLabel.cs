@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommonLayer.ResponseModel
 {
-    public class Label
+    public class ResponseLabel
     {
         public long? UserId { get; set; }
         public long LabelId { get; set; }

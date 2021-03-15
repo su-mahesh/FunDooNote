@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommonLayer.ResponseModel;
 using RepositoryLayer.ContextDB;
+using RepositoryLayer.Models;
 
 namespace RepositoryLayer.LabelInterfeces
 {
@@ -13,14 +14,37 @@ namespace RepositoryLayer.LabelInterfeces
         {
             NotesDB = notesDB;
         }
-        public ICollection<Label> GetUserLabels(long userID)
+
+        public bool DeleteUserLabel(long userID, long labelID)
+        {
+            try
+            {
+                if (NotesDB.Labels.Any(N => N.UserId == userID && N.LabelId == labelID))
+                {
+                    NotesDB.Set<NoteLabel>().
+                        RemoveIfExists(new NoteLabel { LabelId = labelID });
+                    NotesDB.Set<Label>().
+                        RemoveIfExists(new Label { LabelId = labelID });
+                    NotesDB.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public ICollection<ResponseLabel> GetUserLabels(long userID)
         {
             try
             {
                 if (NotesDB.Labels.Any(N => N.UserId == userID))
                 {
                     return NotesDB.Labels.Where(N => N.UserId == userID).
-                    Select(N => new Label { UserId = N.UserId, LabelId = N.LabelId, LabelName = N.LabelName }).ToList();
+                    Select(N => new ResponseLabel { UserId = N.UserId, LabelId = N.LabelId, LabelName = N.LabelName }).ToList();
 
                 }
                 return null;

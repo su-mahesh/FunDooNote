@@ -9,14 +9,26 @@ namespace BusinessLayer.LabelServices
 {
     public class LabelManagementBL : ILabelManagementBL
     {
-       ILabelManagementRL labelManagementRL;
+        readonly ILabelManagementRL labelManagementRL;
 
         public LabelManagementBL(ILabelManagementRL labelManagementRL)
         {
             this.labelManagementRL = labelManagementRL;
         }
 
-        public ICollection<Label> GetUserLabels(long userID)
+        public bool DeleteUserLabel(long userID, long labelID)
+        {
+            try
+            {
+                return labelManagementRL.DeleteUserLabel(userID, labelID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ICollection<ResponseLabel> GetUserLabels(long userID)
         {
             try
             {
@@ -24,7 +36,6 @@ namespace BusinessLayer.LabelServices
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

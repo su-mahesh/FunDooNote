@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
-namespace RepositoryLayer.NotesServices
+namespace RepositoryLayer
 {
     static class DbSetExtensions
     {

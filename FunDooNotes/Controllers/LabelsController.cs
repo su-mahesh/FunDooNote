@@ -14,7 +14,7 @@ namespace FunDooNotes.Controllers
     [Route("[controller]")]
     public class LabelsController : Controller
     {
-        ILabelManagementBL labelManagementBL;
+        readonly ILabelManagementBL labelManagementBL;
 
         public LabelsController(ILabelManagementBL labelManagementBL)
         {
@@ -23,7 +23,7 @@ namespace FunDooNotes.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetActiveNotes()
+        public IActionResult GetUserLabels()
         {
             try
             {
@@ -34,7 +34,31 @@ namespace FunDooNotes.Controllers
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
 
-                    ICollection<Label> result = labelManagementBL.GetUserLabels(UserID);
+                    ICollection<ResponseLabel> result = labelManagementBL.GetUserLabels(UserID);
+                    return Ok(new { success = true, user = Email, Labels = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.InnerException });
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("Delete/{LabelID}")]
+        public IActionResult DeleteUserLabel(long LabelID)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
+
+                    bool result = labelManagementBL.DeleteUserLabel(UserID, LabelID);
                     return Ok(new { success = true, user = Email, Labels = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
