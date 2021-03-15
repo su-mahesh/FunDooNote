@@ -58,7 +58,7 @@ namespace BusinessLayer.Services
                 }
                 else
                 {
-                    throw new UserDetailException(UserDetailException.ExceptionType.ENTERED_INVALID_USER_DETAILS, "user details are details");
+                    throw new UserDetailException(UserDetailException.ExceptionType.ENTERED_INVALID_USER_DETAILS, "user details are invalid");
                 }
             }
             catch (Exception)
