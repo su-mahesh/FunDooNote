@@ -16,7 +16,10 @@ namespace BusinessLayer.MSMQ
         {
             emailService = new EmailService(config);
         }
-
+        /// <summary>
+        /// Sends the password reset link to MSMQ 
+        /// </summary>
+        /// <param name="resetLink">The reset link.</param>
         public void SendPasswordResetLink(ForgetPasswordModel resetLink)
         {
             try
@@ -41,7 +44,12 @@ namespace BusinessLayer.MSMQ
                 throw;
             }
         }
-        
+        /// <summary>
+        /// Handles the ReceiveCompleted event of the Queue control.
+        /// sends email when message received from queue
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="ReceiveCompletedEventArgs"/> instance containing the event data.</param>
         void Queue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {          
             try

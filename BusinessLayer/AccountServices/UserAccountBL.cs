@@ -12,6 +12,10 @@ using RepositoryLayer.Interfaces;
 
 namespace BusinessLayer.Services
 {
+    /// <summary>
+    /// User account business logic
+    /// </summary>
+    /// <seealso cref="BusinessLayer.Interfaces.IUserAccountBL" />
     public class UserAccountBL : IUserAccountBL
     {
         readonly IUserAccountRL userAccountRL;
@@ -25,8 +29,13 @@ namespace BusinessLayer.Services
             userAuthentication = new UserAuthenticationJWT(config);
             msmq = new MSMQService(config);
         }
- 
-        public ResponseUserAccount RegisterUser(RegisterUserAccount user)
+        /// <summary>
+        /// Registers the new user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
+        /// <exception cref="UserDetailException">user details are invalid</exception>
+        public ResponseUserAccount RegisterNewUser(RegisterUserAccount user)
         {
             try
             {
@@ -47,6 +56,12 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
+        /// <summary>
+        /// Athenticates the user using email and password.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
+        /// <exception cref="UserDetailException">user details are invalid</exception>
         public ResponseUserAccount AthenticateUser(LoginUser user)
         {
             try
@@ -66,7 +81,12 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Resets the account password when password is known
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
+        /// <exception cref="UserDetailException">New and comfirm password do not match</exception>
         public bool ResetAccountPassword(ResetPasswordModel user)
         {
             try
@@ -86,7 +106,11 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Sends the forgotten password link to email.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
         public bool SendForgottenPasswordLink(ForgetPasswordModel user)
         {
             try

@@ -8,6 +8,10 @@ using RepositoryLayer.Models;
 
 namespace RepositoryLayer.LabelInterfeces
 {
+    /// <summary>
+    /// manage user's labels
+    /// </summary>
+    /// <seealso cref="RepositoryLayer.LabelInterfeces.ILabelManagementRL" />
     public class LabelManagementRL : ILabelManagementRL
     {
         readonly NotesContext NotesDB;
@@ -15,8 +19,14 @@ namespace RepositoryLayer.LabelInterfeces
         {
             NotesDB = notesDB;
         }
-
-        public bool AddUserLabel(long userID, string labelName)
+        /// <summary>
+        /// Adds the new user label.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="labelName">Name of the label.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Label already exist</exception>
+        public bool AddNewUserLabel(long userID, string labelName)
         {
             try
             {
@@ -36,7 +46,14 @@ namespace RepositoryLayer.LabelInterfeces
                 throw;
             }
         }
-
+        /// <summary>
+        /// Changes the name of the label.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="labelID">The label identifier.</param>
+        /// <param name="labelName">Name of the label.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Label already exist</exception>
         public bool ChangeLabelName(long userID, long labelID, string labelName)
         {
             try
@@ -63,7 +80,12 @@ namespace RepositoryLayer.LabelInterfeces
                 throw;
             }
         }
-
+        /// <summary>
+        /// Deletes the user label.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="labelID">The label identifier.</param>
+        /// <returns></returns>
         public bool DeleteUserLabel(long userID, long labelID)
         {
             try
@@ -85,7 +107,11 @@ namespace RepositoryLayer.LabelInterfeces
                 throw;
             }
         }
-
+        /// <summary>
+        /// Gets all the user labels.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <returns></returns>
         public ICollection<ResponseLabel> GetUserLabels(long userID)
         {
             try
@@ -104,7 +130,12 @@ namespace RepositoryLayer.LabelInterfeces
                 throw;
             }
         }
-
+        /// <summary>
+        /// Gets the specific label notes.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="labelName">Name of the label.</param>
+        /// <returns></returns>
         public ICollection<ResponseNoteModel> GetLabelNotes(long userID, string labelName)
         {
             if (NotesDB.NoteLabels.Any(L => L.UserId == userID && L.Label.LabelName == labelName))

@@ -11,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 
 namespace FundooNotes.Controllers
 {
+    /// <summary>
+    /// User Notes Management
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [ApiController]
     [Route("[controller]")]
     public class NotesController : Controller
@@ -21,7 +25,10 @@ namespace FundooNotes.Controllers
         {
             this.notesManagementBL = notesManagementBL;
         }
-
+        /// <summary>
+        /// Gets the all active notes.
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public IActionResult GetActiveNotes()
@@ -45,7 +52,11 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.InnerException });
             }
         }
-        
+        /// <summary>
+        /// Adds the new note.
+        /// </summary>
+        /// <param name="Note">The note.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("AddNote")]
         public IActionResult AddUserNote(ResponseNoteModel Note)
@@ -68,9 +79,13 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Gets the archived notes.
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("Archive")]
-        public IActionResult GetArchiveNotes()
+        public IActionResult GetArchivedNotes()
         {
             try
             {
@@ -91,7 +106,10 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.InnerException });
             }
         }
-
+        /// <summary>
+        /// Gets the trashed notes.
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("Trash")]
         public IActionResult GetTrashNotes()
@@ -115,6 +133,11 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Deletes the note by note id.
+        /// </summary>
+        /// <param name="NoteID">The note identifier.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete("Delete/{NoteID}")]
         public IActionResult DeleteNote(long NoteID)
@@ -137,6 +160,10 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Gets the reminder notes.
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("Reminder")]
         public IActionResult GetReminderNotes()
@@ -160,6 +187,11 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Updates the note.
+        /// </summary>
+        /// <param name="Note">The note.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPut("Update")]
         public IActionResult UpdateNote(ResponseNoteModel Note)
@@ -182,6 +214,11 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Toggles the pin, pin or unpin.
+        /// </summary>
+        /// <param name="NoteID">The note identifier.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("Pin/{NoteID}")]
         public IActionResult TogglePin(long NoteID)
@@ -203,6 +240,11 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Toggles the archive, archive or unarchive note
+        /// </summary>
+        /// <param name="NoteID">The note identifier.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("Archive/{NoteID}")]
         public IActionResult ToggleArchive(long NoteID)
@@ -224,6 +266,12 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Changes the color of the note background.
+        /// </summary>
+        /// <param name="NoteID">The note identifier.</param>
+        /// <param name="ColorCode">The color code.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("Color/{NoteID}/{ColorCode}")]
         public IActionResult ChangeNoteBackgroundColor(long NoteID, string ColorCode)
@@ -245,9 +293,14 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Sets the note reminder.
+        /// </summary>
+        /// <param name="Reminder">The reminder.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("SetReminder")]
-        public IActionResult ChangeColor(NoteReminder Reminder)
+        public IActionResult SetNoteReminder(NoteReminder Reminder)
         {
             try
             {

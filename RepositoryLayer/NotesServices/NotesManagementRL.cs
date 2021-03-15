@@ -9,15 +9,26 @@ using RepositoryLayer.NotesInterface;
 
 namespace RepositoryLayer.NotesServises
 {
+    /// <summary>
+    /// notes db management
+    /// </summary>
+    /// <seealso cref="RepositoryLayer.NotesInterface.INotesManagementRL" />
     public class NotesManagementRL : INotesManagementRL
     {
+        /// <summary>
+        /// The notes database
+        /// </summary>
         readonly NotesContext NotesDB;
         ICollection<ResponseNoteModel> responseNoteModels;
         public NotesManagementRL(NotesContext notesDB)
         {
             NotesDB = notesDB;
         }
-
+        /// <summary>
+        /// Adds the user note.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <returns></returns>
         public ResponseNoteModel AddUserNote(ResponseNoteModel note)
         {
             try
@@ -79,7 +90,12 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Deletes the note.
+        /// </summary>
+        /// <param name="UserID">The user identifier.</param>
+        /// <param name="noteID">The note identifier.</param>
+        /// <returns></returns>
         public bool DeleteNote(long UserID, long noteID)
         {
             try
@@ -107,7 +123,13 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Gets the notes.
+        /// </summary>
+        /// <param name="UserID">The user identifier.</param>
+        /// <param name="IsTrash">if set to <c>true</c> [is trash].</param>
+        /// <param name="IsArchieve">if set to <c>true</c> [is archieve].</param>
+        /// <returns></returns>
         public ICollection<ResponseNoteModel> GetNotes(long UserID, bool IsTrash, bool IsArchieve)
         {
             try
@@ -137,7 +159,11 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Gets the reminder notes.
+        /// </summary>
+        /// <param name="UserID">The user identifier.</param>
+        /// <returns></returns>
         public ICollection<ResponseNoteModel> GetReminderNotes(long UserID)
         {
             try
@@ -167,7 +193,12 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Toggles the archive.
+        /// </summary>
+        /// <param name="noteID">The note identifier.</param>
+        /// <param name="userID">The user identifier.</param>
+        /// <returns></returns>
         public bool ToggleArchive(long noteID, long userID)
         {
             try
@@ -190,7 +221,12 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Toggles the note pin.
+        /// </summary>
+        /// <param name="noteID">The note identifier.</param>
+        /// <param name="userID">The user identifier.</param>
+        /// <returns></returns>
         public bool ToggleNotePin(long noteID, long userID)
         {
             try
@@ -213,7 +249,13 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Changes the color of the background.
+        /// </summary>
+        /// <param name="noteID">The note identifier.</param>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="colorCode">The color code.</param>
+        /// <returns></returns>
         public bool ChangeBackgroundColor(long noteID, long userID, string colorCode)
         {
             try
@@ -232,7 +274,11 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Updates the existing note.
+        /// </summary>
+        /// <param name="Note">The note.</param>
+        /// <returns></returns>
         public ResponseNoteModel UpdateNote(ResponseNoteModel Note)
         {
             try
@@ -303,7 +349,11 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Sets the note reminder.
+        /// </summary>
+        /// <param name="reminder">The reminder.</param>
+        /// <returns></returns>
         public bool SetNoteReminder(NoteReminder reminder)
         {
             try

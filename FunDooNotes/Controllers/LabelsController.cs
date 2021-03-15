@@ -11,6 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunDooNotes.Controllers
 {
+    /// <summary>
+    /// Manage user note labels
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [ApiController]
     [Route("[controller]")]
     public class LabelsController : Controller
@@ -22,6 +26,10 @@ namespace FunDooNotes.Controllers
             this.labelManagementBL = labelManagementBL;
         }
 
+        /// <summary>
+        /// Gets the user labels.
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public IActionResult GetUserLabels()
@@ -44,7 +52,11 @@ namespace FunDooNotes.Controllers
                 return BadRequest(new { success = false, exception.InnerException });
             }
         }
-
+        /// <summary>
+        /// Deletes the user label.
+        /// </summary>
+        /// <param name="LabelID">The label identifier.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete("Delete/{LabelID}")]
         public IActionResult DeleteUserLabel(long LabelID)
@@ -67,6 +79,12 @@ namespace FunDooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Changes the name of the label.
+        /// </summary>
+        /// <param name="LabelID">The label identifier.</param>
+        /// <param name="LabelName">Name of the label.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("Edit/{LabelID}/{LabelName}")]
         public IActionResult ChangeLabelName(long LabelID, string LabelName)
@@ -89,6 +107,11 @@ namespace FunDooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Adds the new user label.
+        /// </summary>
+        /// <param name="LabelName">Name of the label.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("Add/{LabelName}")]
         public IActionResult AddUserLabel(string LabelName)
@@ -111,6 +134,11 @@ namespace FunDooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Gets the label notes.
+        /// </summary>
+        /// <param name="LabelName">Name of the label.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("{LabelName}")]
         public IActionResult GetLabelNotes(string LabelName)

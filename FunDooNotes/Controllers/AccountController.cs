@@ -13,6 +13,10 @@ using Microsoft.Extensions.Logging;
 
 namespace BusinessLayer.Controllers
 {
+    /// <summary>
+    /// Manage account Register, Login, Reset Password
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [ApiController]
     [Route("[controller]")] 
     public class AccountController : ControllerBase
@@ -27,7 +31,12 @@ namespace BusinessLayer.Controllers
             userAuthentication = new UserAuthenticationJWT(this.config);
             this.userAccountBL = userAccountBL;
         }
-       
+
+        /// <summary>
+        /// Registers the user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
         [HttpPost("RegisterUser")]
         public IActionResult RegisterUser(RegisterUserAccount user)
         {
@@ -37,7 +46,7 @@ namespace BusinessLayer.Controllers
             }
             try
             {
-                ResponseUserAccount result = userAccountBL.RegisterUser(user);               
+                ResponseUserAccount result = userAccountBL.RegisterNewUser(user);               
                 if (result != null)
                 {
                     return Ok(new { success = true, Message = "User Registration Successful", user = result });
@@ -52,6 +61,11 @@ namespace BusinessLayer.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }                     
         }
+        /// <summary>
+        /// Authenticates the user.
+        /// </summary>
+        /// <param name="loginUser">The login user.</param>
+        /// <returns></returns>
         [HttpPost("Login")]
         public IActionResult AuthenticateUser(LoginUser loginUser)
         {
@@ -80,7 +94,11 @@ namespace BusinessLayer.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
-
+        /// <summary>
+        /// Resets the password.
+        /// </summary>
+        /// <param name="resetPasswordModel">The reset password model.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("ResetPassword")]
         public IActionResult ResetPassword(ResetPasswordModel resetPasswordModel)
@@ -106,6 +124,11 @@ namespace BusinessLayer.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Resets the forgotten password.
+        /// </summary>
+        /// <param name="forgetPasswordModel">The forget password model.</param>
+        /// <returns></returns>
         [HttpPost("ForgetPassword")]
         public IActionResult ResetForgottenPassword(ForgetPasswordModel forgetPasswordModel)
         {

@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BusinessLayer.JWTAuthentication
 {
+    /// <summary>
+    /// JW Token generator
+    /// </summary>
     public class UserAuthenticationJWT
     {
         private readonly IConfiguration config;
@@ -16,17 +19,32 @@ namespace BusinessLayer.JWTAuthentication
         {
             this.config = config;
         }
-
+        /// <summary>
+        /// Generates the session JWT.
+        /// </summary>
+        /// <param name="userInfo">The user information.</param>
+        /// <returns></returns>
         public string GenerateSessionJWT(ResponseUserAccount userInfo)
         {
             DateTime ExpireTime = DateTime.Now.AddHours(2);
             return GenerateJSONWebToken(userInfo, ExpireTime);
         }
+        /// <summary>
+        /// Generates the password reset JWT.
+        /// </summary>
+        /// <param name="userInfo">The user information.</param>
+        /// <returns></returns>
         public string GeneratePasswordResetJWT(ResponseUserAccount userInfo)
         {
             DateTime ExpireTime = DateTime.Now.AddHours(2);
             return GenerateJSONWebToken(userInfo, ExpireTime);
         }
+        /// <summary>
+        /// Generates the json web token.
+        /// </summary>
+        /// <param name="userInfo">The user information.</param>
+        /// <param name="ExpireTime">The expire time.</param>
+        /// <returns></returns>
         public string GenerateJSONWebToken(ResponseUserAccount userInfo, DateTime ExpireTime)
         {
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
