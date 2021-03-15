@@ -126,6 +126,17 @@ namespace BusinessLayer.NotesServices
             }
         }
 
+        public bool ChangeBackgroundColor(long noteID, long userID, string colorCode)
+        {
+            try
+            {
+                return NotesManagementRL.ChangeBackgroundColor(noteID, userID, colorCode);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public NoteModel UpdateNote(NoteModel note)
         {
             try

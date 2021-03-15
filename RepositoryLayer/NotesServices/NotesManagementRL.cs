@@ -216,6 +216,25 @@ namespace RepositoryLayer.NotesServises
             }
         }
 
+        public bool ChangeBackgroundColor(long noteID, long userID, string colorCode)
+        {
+            try
+            {
+                var note = NotesDB.Notes.FirstOrDefault(N => N.NoteId == noteID && N.UserId == userID);
+                if (colorCode != null)
+                {
+                    note.BackgroundColor = "#"+colorCode;
+                }
+                NotesDB.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public NoteModel UpdateNote(NoteModel Note)
         {
             try

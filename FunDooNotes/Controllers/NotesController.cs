@@ -224,5 +224,26 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        [Authorize]
+        [HttpPatch("Color/{NoteID}/{ColorCode}")]
+        public IActionResult ChangeColor(long NoteID, string ColorCode)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    bool result = notesManagementBL.ChangeBackgroundColor(NoteID, UserID, ColorCode);
+                    return Ok(new { success = true, Message = "note pin toggled", Note = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
     }
 }
