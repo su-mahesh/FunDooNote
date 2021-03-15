@@ -174,6 +174,11 @@ namespace RepositoryLayer.NotesServises
         {
             try
             {
+                if (NotesDB.NoteLabels.Any(n => n.NoteId == Note.NoteID && n.UserId == Note.UserID))
+                {
+                    NotesDB.NoteLabels.RemoveRange(NotesDB.NoteLabels.Where(N => N.NoteId == Note.NoteID));
+                }
+                NotesDB.SaveChanges();
                 var UpdateNote = NotesDB.Notes.FirstOrDefault(N => N.NoteId == Note.NoteID && N.UserId == Note.UserID);
                 if (UpdateNote != null)
                 {
@@ -186,9 +191,6 @@ namespace RepositoryLayer.NotesServises
                     UpdateNote.IsPin = Note.IsPin;
                     UpdateNote.IsTrash = Note.IsTrash;
                 }
-
-                NotesDB.SaveChanges();
-                NotesDB.NoteLabels.RemoveRange(NotesDB.NoteLabels.Where(L => L.NoteId == Note.NoteID).ToList());
                 NotesDB.SaveChanges();
                 if (Note.Labels != null)
                 {
@@ -199,9 +201,10 @@ namespace RepositoryLayer.NotesServises
                     NotesDB.NoteLabels.Add(
                         new NoteLabel
                         {
+                            UserId = Note.UserID,
                             NoteId = Note.NoteID,
                             LabelId = NotesDB.Labels.FirstOrDefault(a => a.LabelName == L).LabelId
-                        }));
+                        })); ;
                 }
                 NotesDB.Collaborators.RemoveRange(NotesDB.Collaborators.Where(L => L.NoteId == Note.NoteID).ToList());
                 NotesDB.SaveChanges();
@@ -219,6 +222,7 @@ namespace RepositoryLayer.NotesServises
                         NoteID = N.NoteId,
                         Title = N.Title,
                         Text = N.Text,
+                        CreatedOn = N.CreatedOn,
                         ReminderOn = N.ReminderOn,
                         BackgroundColor = N.BackgroundColor,
                         BackgroundImage = N.BackgroundImage,
@@ -231,7 +235,7 @@ namespace RepositoryLayer.NotesServises
                     ).ToList().First();
                 return NewResponseNote;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
