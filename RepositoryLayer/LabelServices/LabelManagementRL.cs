@@ -32,10 +32,8 @@ namespace RepositoryLayer.LabelInterfeces
             }
             catch (Exception)
             {
-
                 throw;
             }
-            return false;
         }
 
         public bool ChangeLabelName(long userID, long labelID, string labelName)
