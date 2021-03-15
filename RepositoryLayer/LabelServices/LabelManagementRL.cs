@@ -21,9 +21,17 @@ namespace RepositoryLayer.LabelInterfeces
             {
                 if (NotesDB.Labels.Any(N => N.UserId == userID && N.LabelId == labelID))
                 {
-                    NotesDB.Labels.First(N => N.LabelId == labelID).LabelName = labelName;
-                    NotesDB.SaveChanges();
-                    return true;
+                    if (NotesDB.Labels.Any(N => N.LabelId == labelID && N.LabelName == labelName))
+                    {
+                        return true;
+                    }
+                    if (!NotesDB.Labels.Any(N => N.UserId == userID && N.LabelName == labelName))
+                    {
+                        NotesDB.Labels.First(N => N.LabelId == labelID).LabelName = labelName;
+                        NotesDB.SaveChanges();
+                        return true;
+                    }
+                    throw new Exception("Label already exist");
                 }
                 return false;
             }

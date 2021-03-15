@@ -63,7 +63,7 @@ namespace FunDooNotes.Controllers
             }
             catch (Exception exception)
             {
-                return BadRequest(new { success = false, exception.InnerException });
+                return BadRequest(new { success = false, exception.Message });
             }
         }
         [HttpPatch("Edit/{LabelID}/{LabelName}")]
@@ -84,7 +84,7 @@ namespace FunDooNotes.Controllers
             }
             catch (Exception exception)
             {
-                return BadRequest(new { success = false, exception.InnerException });
+                return BadRequest(new { success = false, exception.Message });
             }
         }
     }
