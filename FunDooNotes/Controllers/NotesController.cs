@@ -15,7 +15,7 @@ namespace FundooNotes.Controllers
     [Route("[controller]")]
     public class NotesController : Controller
     {
-        INotesManagementBL notesManagementBL;
+        readonly INotesManagementBL notesManagementBL;
 
         public NotesController(INotesManagementBL notesManagementBL)
         {
@@ -45,7 +45,7 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.InnerException });
             }
         }
-
+        
         [Authorize]
         [HttpPost("AddNote")]
         public IActionResult AddUserNote(NoteModel Note)
@@ -128,7 +128,30 @@ namespace FundooNotes.Controllers
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
 
-                    bool result = notesManagementBL.DeleteNote(NoteID);
+                    bool result = notesManagementBL.DeleteNote(UserID, NoteID);
+                    return Ok(new { success = true, user = Email, Message = "note deleted" });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        [Authorize]
+        [HttpGet("Reminder")]
+        public IActionResult GetReminderNotes()
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
+
+                    var result = notesManagementBL.GetReminderNotes(UserID);
                     return Ok(new { success = true, user = Email, Notes = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });

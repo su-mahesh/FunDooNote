@@ -9,7 +9,7 @@ namespace BusinessLayer.NotesServices
 {
     public class NotesManagementBL : INotesManagementBL
     {
-        INotesManagementRL NotesManagementRL;
+        readonly INotesManagementRL NotesManagementRL;
 
         public NotesManagementBL(INotesManagementRL notesManagementRL)
         {
@@ -40,11 +40,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public bool DeleteNote(long noteID)
+        public bool DeleteNote(long UserID, long noteID)
         {
             try
             {
-                bool result = NotesManagementRL.DeleteNote(noteID);
+                bool result = NotesManagementRL.DeleteNote(UserID, noteID);
                 return result;
             }
             catch (Exception)
@@ -78,11 +78,47 @@ namespace BusinessLayer.NotesServices
             }
         }
 
+        public ICollection<NoteModel> GetReminderNotes(long UserID)
+        {
+            try
+            {
+                return NotesManagementRL.GetReminderNotes(UserID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public ICollection<NoteModel> GetTrashNotes(long UserID)
         {
             try
             {
                 return NotesManagementRL.GetNotes(UserID, true, false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public NoteModel UpdateNote(NoteModel note)
+        {
+            try
+            {
+                if (note.Labels != null)
+                {
+                    note.Labels = note.Labels.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                }
+                if (note.Collaborators != null)
+                {
+                    note.Collaborators = note.Collaborators.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                }
+                if (note.IsTrash || note.IsArchive)
+                {
+                    note.IsPin = false;
+                }
+                return NotesManagementRL.UpdateNote(note);
             }
             catch (Exception)
             {

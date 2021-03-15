@@ -12,6 +12,8 @@ namespace BusinessLayer.NotesInterface
         public NoteModel AddUserNote(NoteModel note);
         ICollection<NoteModel> GetArchiveNotes(long userID);
         ICollection<NoteModel> GetTrashNotes(long userID);
-        bool DeleteNote(long noteID);
+        bool DeleteNote(long UserID, long noteID);
+        NoteModel UpdateNote(NoteModel note);
+        ICollection<NoteModel> GetReminderNotes(long userID);
     }
 }
