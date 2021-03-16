@@ -8,6 +8,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using BusinessLayer.RedisCacheService;
 
 namespace BusinessLayer.NotesServices
 {
@@ -15,11 +16,13 @@ namespace BusinessLayer.NotesServices
     {
         private readonly IDistributedCache distributedCache;
         readonly INotesManagementRL NotesManagementRL;
+        RedisCacheServiceBL redis;
 
         public NotesManagementBL(INotesManagementRL notesManagementRL, IDistributedCache distributedCache)
         {
             NotesManagementRL = notesManagementRL;
             this.distributedCache = distributedCache;
+            redis = new RedisCacheServiceBL(this.distributedCache);
         }
 
         public ResponseNoteModel AddUserNote(ResponseNoteModel note)
@@ -50,7 +53,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(UserID);
+                await redis.RemoveNotesRedisCache(UserID);
                 bool result = NotesManagementRL.DeleteNote(UserID, noteID);
                 return result;
             }
@@ -76,7 +79,7 @@ namespace BusinessLayer.NotesServices
                 else
                 {
                     Notes = NotesManagementRL.GetNotes(UserID, false, false);
-                    await AddRedisCache(cacheKey, Notes);
+                    await redis.AddRedisCache(cacheKey, Notes);
                 }
                 return Notes;
             }
@@ -102,7 +105,7 @@ namespace BusinessLayer.NotesServices
                 else
                 {
                     Notes = NotesManagementRL.GetNotes(UserID, false, true);
-                    await AddRedisCache(cacheKey, Notes);
+                    await redis.AddRedisCache(cacheKey, Notes);
                 }
                 return Notes;
             }
@@ -128,7 +131,7 @@ namespace BusinessLayer.NotesServices
                 else
                 {
                     Notes = NotesManagementRL.GetReminderNotes(UserID);
-                    await AddRedisCache(cacheKey, Notes);
+                    await redis.AddRedisCache(cacheKey, Notes);
                 }
                 return Notes;
             }
@@ -154,7 +157,7 @@ namespace BusinessLayer.NotesServices
                 else
                 {
                     Notes = NotesManagementRL.GetNotes(UserID, true, false);
-                    await AddRedisCache(cacheKey, Notes);
+                    await redis.AddRedisCache(cacheKey, Notes);
                 }
                 return Notes;
             }
@@ -168,7 +171,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(userID);
+                await redis.RemoveNotesRedisCache(userID);
                 return NotesManagementRL.ToggleArchive(noteID, userID);
             }
             catch (Exception)
@@ -181,7 +184,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(userID);
+                await redis.RemoveNotesRedisCache(userID);
                 return NotesManagementRL.ToggleNotePin(noteID,userID);
             }
             catch (Exception)
@@ -194,7 +197,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(userID);
+                await redis.RemoveNotesRedisCache(userID);
                 return NotesManagementRL.ChangeBackgroundColor(noteID, userID, colorCode);
             }
             catch (Exception)
@@ -206,7 +209,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(note.UserID);
+                await redis.RemoveNotesRedisCache(note.UserID);
                 if (note.Labels != null)
                 {
                     note.Labels = note.Labels.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -231,7 +234,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(reminder.UserID);
+                await redis.RemoveNotesRedisCache(reminder.UserID);
                 if (reminder.ReminderOn < DateTime.Now)
                 {
                     throw new Exception("Time is passed");
@@ -253,7 +256,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                await RemoveNotesRedisCache(collaborators.UserID);
+                await redis.RemoveNotesRedisCache(collaborators.UserID);
                 return NotesManagementRL.UpdateCollaborators(collaborators);
             }
             catch (Exception)
@@ -261,24 +264,6 @@ namespace BusinessLayer.NotesServices
 
                 throw;
             }
-        }
-        public async Task RemoveNotesRedisCache(long UserID)
-        {
-            var cacheKey = "ActiveNotes:" + UserID.ToString();
-            await distributedCache.RemoveAsync(cacheKey);
-            cacheKey = "ArchiveNotes:" + UserID.ToString();
-            await distributedCache.RemoveAsync(cacheKey);
-            cacheKey = "ReminderNotes:" + UserID.ToString();
-            await distributedCache.RemoveAsync(cacheKey);
-        }
-        public async Task AddRedisCache(string cacheKey, object obj)
-        {
-            string serializedNotes = JsonConvert.SerializeObject(obj);
-            var redisNoteCollection = Encoding.UTF8.GetBytes(serializedNotes);
-            var options = new DistributedCacheEntryOptions()
-                .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-                .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-            await distributedCache.SetAsync(cacheKey, redisNoteCollection, options);
         }
     }
 }
