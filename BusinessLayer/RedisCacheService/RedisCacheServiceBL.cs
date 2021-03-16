@@ -24,6 +24,8 @@ namespace BusinessLayer.RedisCacheService
             await distributedCache.RemoveAsync(cacheKey);
             cacheKey = "ReminderNotes:" + UserID.ToString();
             await distributedCache.RemoveAsync(cacheKey);
+            cacheKey = "LabelNotes:" + UserID.ToString();
+            await distributedCache.RemoveAsync(cacheKey);
         }
         public async Task AddRedisCache(string cacheKey, object obj)
         {

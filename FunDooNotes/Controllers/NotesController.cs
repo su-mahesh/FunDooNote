@@ -22,7 +22,7 @@ namespace FundooNotes.Controllers
     {
         readonly INotesManagementBL notesManagementBL;
 
-        public NotesController(INotesManagementBL notesManagementBL, IDistributedCache distributedCache)
+        public NotesController(INotesManagementBL notesManagementBL)
         {
             this.notesManagementBL = notesManagementBL;
         }

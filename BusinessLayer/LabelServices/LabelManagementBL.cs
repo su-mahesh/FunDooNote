@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using BusinessLayer.RedisCacheService;
 using CommonLayer.RequestModel;
 using CommonLayer.ResponseModel;
 using LabelInterfaces;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using RepositoryLayer.LabelInterfeces;
 
 namespace BusinessLayer.LabelServices
@@ -15,25 +19,52 @@ namespace BusinessLayer.LabelServices
     public class LabelManagementBL : ILabelManagementBL
     {
         readonly ILabelManagementRL labelManagementRL;
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LabelManagementBL"/> class.
-        /// </summary>
-        /// <param name="labelManagementRL">The label management rl.</param>
-        public LabelManagementBL(ILabelManagementRL labelManagementRL)
+        private readonly IDistributedCache distributedCache;
+        readonly RedisCacheServiceBL redis;
+
+        public LabelManagementBL(ILabelManagementRL labelManagementRL, IDistributedCache distributedCache)
         {
             this.labelManagementRL = labelManagementRL;
+            this.distributedCache = distributedCache;
+            redis = new RedisCacheServiceBL(this.distributedCache);
         }
         /// <summary>
-        /// Adds the new user label.
+        /// Adds the user label asynchronous.
         /// </summary>
         /// <param name="userID">The user identifier.</param>
         /// <param name="labelName">Name of the label.</param>
         /// <returns></returns>
+        public async Task<bool> AddUserLabelAsync(long userID, string labelName)
+        {
+            try
+            {
+                await redis.RemoveNotesRedisCache(userID);
+                return labelManagementRL.AddNewUserLabel(userID, labelName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public bool AddUserLabel(long userID, string labelName)
         {
             try
             {
-                return labelManagementRL.AddNewUserLabel(userID, labelName);
+                return AddUserLabelAsync(userID, labelName).Result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> ChangeLabelNameAsync(long userID, long labelID, string labelName)
+        {
+            try
+            {
+                await redis.RemoveNotesRedisCache(userID);
+                return labelManagementRL.ChangeLabelName(userID, labelID, labelName);
             }
             catch (Exception)
             {
@@ -51,23 +82,19 @@ namespace BusinessLayer.LabelServices
         {
             try
             {
-                return labelManagementRL.ChangeLabelName(userID, labelID, labelName);
+                return ChangeLabelNameAsync(userID, labelID, labelName).Result;
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        /// <summary>
-        /// Deletes the user label.
-        /// </summary>
-        /// <param name="userID">The user identifier.</param>
-        /// <param name="labelID">The label identifier.</param>
-        /// <returns></returns>
-        public bool DeleteUserLabel(long userID, long labelID)
+
+        public async Task<bool> DeleteUserLabelAsync(long userID, long labelID)
         {
             try
             {
+                await redis.RemoveNotesRedisCache(userID);
                 return labelManagementRL.DeleteUserLabel(userID, labelID);
             }
             catch (Exception)
@@ -75,20 +102,52 @@ namespace BusinessLayer.LabelServices
                 throw;
             }
         }
-        /// <summary>
-        /// Gets the label notes.
-        /// </summary>
-        /// <param name="userID">The user identifier.</param>
-        /// <param name="labelName">Name of the label.</param>
-        /// <returns></returns>
-        public ICollection<ResponseNoteModel> GetLabelNotes(long userID, string labelName)
+        public bool DeleteUserLabel(long userID, long labelID)
         {
             try
             {
-                return labelManagementRL.GetLabelNotes(userID, labelName);
+                return DeleteUserLabelAsync(userID, labelID).Result;
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public async Task<ICollection<ResponseNoteModel>> GetLabelNotesAsync(long UserID, string labelName)
+        {
+            var cacheKey =  labelName + "LabelNotes:" + UserID.ToString();
+            string serializedNotes;
+            ICollection<ResponseNoteModel> Notes;
+            try
+            {
+                var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                if (redisNoteCollection != null)
+                {
+                    serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
+                    Notes = JsonConvert.DeserializeObject<List<ResponseNoteModel>>(serializedNotes);
+                }
+                else
+                {
+                    Notes = labelManagementRL.GetLabelNotes(UserID, labelName);
+                    await redis.AddRedisCache(cacheKey, Notes);
+                }
+                return Notes;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public ICollection<ResponseNoteModel> GetLabelNotes(long UserID, string labelName) 
+        {
+            try
+            {
+                return GetLabelNotesAsync(UserID, labelName).Result;
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
@@ -101,12 +160,38 @@ namespace BusinessLayer.LabelServices
         {
             try
             {
-                return labelManagementRL.GetUserLabels(userID);
+                return GetUserLabelsAsync(userID).Result;
             }
             catch (Exception)
             {
                 throw;
             }
+        }
+        public async Task<ICollection<ResponseLabel>> GetUserLabelsAsync(long UserID)
+        {
+            var cacheKey = "UserLabels:" + UserID.ToString();
+            string serializedNotes;
+            ICollection<ResponseLabel> Labels;
+            try
+            {
+                var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                if (redisNoteCollection != null)
+                {
+                    serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
+                    Labels = JsonConvert.DeserializeObject<List<ResponseLabel>>(serializedNotes);
+                }
+                else
+                {
+                    Labels = labelManagementRL.GetUserLabels(UserID);
+                    await redis.AddRedisCache(cacheKey, Labels);
+                }
+                return Labels;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

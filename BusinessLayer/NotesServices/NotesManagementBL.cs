@@ -16,19 +16,23 @@ namespace BusinessLayer.NotesServices
     {
         private readonly IDistributedCache distributedCache;
         readonly INotesManagementRL NotesManagementRL;
-        RedisCacheServiceBL redis;
-
+        readonly RedisCacheServiceBL redis;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotesManagementBL"/> class.
+        /// </summary>
+        /// <param name="notesManagementRL">The notes management rl.</param>
+        /// <param name="distributedCache">The distributed cache.</param>
         public NotesManagementBL(INotesManagementRL notesManagementRL, IDistributedCache distributedCache)
         {
             NotesManagementRL = notesManagementRL;
             this.distributedCache = distributedCache;
             redis = new RedisCacheServiceBL(this.distributedCache);
         }
-
-        public ResponseNoteModel AddUserNote(ResponseNoteModel note)
+        public async Task<ResponseNoteModel> AddUserNoteAsync(ResponseNoteModel note)
         {
             try
             {
+                await redis.RemoveNotesRedisCache(note.UserID);
                 if (note.Labels != null)
                 {
                     note.Labels = note.Labels.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -42,6 +46,17 @@ namespace BusinessLayer.NotesServices
                     note.IsPin = false;
                 }
                 return NotesManagementRL.AddUserNote(note);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public ResponseNoteModel AddUserNote(ResponseNoteModel note)
+        {
+            try
+            {
+                return AddUserNoteAsync(note).Result;
             }
             catch (Exception)
             {
