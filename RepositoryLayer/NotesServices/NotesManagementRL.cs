@@ -369,7 +369,11 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
-
+        /// <summary>
+        /// Updates the collaborators.
+        /// </summary>
+        /// <param name="collaborators">The collaborators.</param>
+        /// <returns></returns>
         public bool UpdateCollaborators(AddCollaboratorsModel collaborators)
         {
             try
@@ -394,6 +398,30 @@ namespace RepositoryLayer.NotesServises
                     
                    
                 return true;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Removes the reminder.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="noteID">The note identifier.</param>
+        /// <returns></returns>
+        public bool RemoveReminder(long userID, long noteID)
+        {
+            try
+            {
+                if (NotesDB.Notes.Any(N => N.UserId == userID && N.NoteId == noteID))
+                {
+                    NotesDB.Notes.FirstOrDefault(N => N.NoteId == noteID).ReminderOn = null;
+                    NotesDB.SaveChanges();
+                    return true;
                 }
             }
             catch (Exception)

@@ -18,5 +18,6 @@ namespace RepositoryLayer.NotesInterface
         bool ChangeBackgroundColor(long noteID, long userID, string colorCode);
         bool SetNoteReminder(NoteReminder reminder);
         bool UpdateCollaborators(AddCollaboratorsModel collaborators);
+        bool RemoveReminder(long userID, long noteID);
     }
 }

@@ -320,6 +320,11 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, exception.Message });
             }
         }
+        /// <summary>
+        /// Updates the collaborators.
+        /// </summary>
+        /// <param name="Collaborators">The collaborators.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("UpdateCollaborators")]
         public IActionResult UpdateCollaborators(AddCollaboratorsModel Collaborators)
@@ -334,6 +339,32 @@ namespace FundooNotes.Controllers
                     Collaborators.UserID = UserID;
                     bool result = notesManagementBL.UpdateCollaborators(Collaborators);
                     return Ok(new { success = true, Message = "collaborators updated", Note = result });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        /// <summary>
+        /// Removes the reminder.
+        /// </summary>
+        /// <param name="NoteID">The note identifier.</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPatch("RemoveReminder/{NoteID}")]
+        public IActionResult RemoveReminder(long NoteID)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    bool result = notesManagementBL.RemoveReminder(UserID, NoteID);
+                    return Ok(new { success = true, Message = "note reminder added" });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
             }
