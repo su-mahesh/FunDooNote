@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using CommonLayer.RequestModel;
 
 namespace BusinessLayer.NotesInterface
@@ -8,7 +9,7 @@ namespace BusinessLayer.NotesInterface
 {
     public interface INotesManagementBL
     {
-        ICollection<ResponseNoteModel> GetActiveNotes(long UserID);
+        public Task<ICollection<ResponseNoteModel>> GetActiveNotes(long UserID);
         public ResponseNoteModel AddUserNote(ResponseNoteModel note);
         ICollection<ResponseNoteModel> GetArchiveNotes(long userID);
         ICollection<ResponseNoteModel> GetTrashNotes(long userID);

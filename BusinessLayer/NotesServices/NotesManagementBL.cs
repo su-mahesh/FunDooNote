@@ -4,16 +4,22 @@ using BusinessLayer.NotesInterface;
 using CommonLayer.RequestModel;
 using RepositoryLayer.NotesInterface;
 using System.Linq;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace BusinessLayer.NotesServices
 {
     public class NotesManagementBL : INotesManagementBL
     {
+        private readonly IDistributedCache distributedCache;
         readonly INotesManagementRL NotesManagementRL;
 
-        public NotesManagementBL(INotesManagementRL notesManagementRL)
+        public NotesManagementBL(INotesManagementRL notesManagementRL, IDistributedCache distributedCache)
         {
             NotesManagementRL = notesManagementRL;
+            this.distributedCache = distributedCache;
         }
 
         public ResponseNoteModel AddUserNote(ResponseNoteModel note)
@@ -53,12 +59,30 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<ResponseNoteModel> GetActiveNotes(long UserID)
+        public async Task<ICollection<ResponseNoteModel>> GetActiveNotes(long UserID)
         {
+            var cacheKey = UserID.ToString();
+            string serializedNotes;
+            ICollection<ResponseNoteModel> Notes;
             try
             {
-                ICollection<ResponseNoteModel> result = NotesManagementRL.GetNotes(UserID, false, false);
-                return result;
+                   var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                if (redisNoteCollection != null)
+                {
+                    serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
+                    Notes = JsonConvert.DeserializeObject<List<ResponseNoteModel>>(serializedNotes);
+                }
+                else
+                {
+                    Notes = NotesManagementRL.GetNotes(UserID, false, false);
+                    serializedNotes = JsonConvert.SerializeObject(Notes);
+                    redisNoteCollection = Encoding.UTF8.GetBytes(serializedNotes);
+                    var options = new DistributedCacheEntryOptions()
+                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                    await distributedCache.SetAsync(cacheKey, redisNoteCollection);
+                }
+                return Notes;
             }
             catch (Exception)
             {
