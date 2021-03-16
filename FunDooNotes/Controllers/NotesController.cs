@@ -7,6 +7,7 @@ using BusinessLayer.NotesInterface;
 using CommonLayer.RequestModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 
 namespace FundooNotes.Controllers
@@ -20,10 +21,12 @@ namespace FundooNotes.Controllers
     public class NotesController : Controller
     {
         readonly INotesManagementBL notesManagementBL;
+        private readonly IDistributedCache distributedCache;
 
-        public NotesController(INotesManagementBL notesManagementBL)
+        public NotesController(INotesManagementBL notesManagementBL, IDistributedCache distributedCache)
         {
             this.notesManagementBL = notesManagementBL;
+            this.distributedCache = distributedCache;
         }
         /// <summary>
         /// Gets the all active notes.
@@ -149,7 +152,6 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
-
                     bool result = notesManagementBL.DeleteNote(UserID, NoteID);
                     return Ok(new { success = true, user = Email, Message = "note deleted" });
                 }

@@ -50,6 +50,8 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                var cacheKey = UserID.ToString() + "ActiveNotes";
+                distributedCache.RemoveAsync(cacheKey);
                 bool result = NotesManagementRL.DeleteNote(UserID, noteID);
                 return result;
             }
@@ -61,12 +63,12 @@ namespace BusinessLayer.NotesServices
 
         public async Task<ICollection<ResponseNoteModel>> GetActiveNotes(long UserID)
         {
-            var cacheKey = UserID.ToString();
+            var cacheKey = UserID.ToString()+ "ActiveNotes";
             string serializedNotes;
             ICollection<ResponseNoteModel> Notes;
             try
             {
-                   var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
                 if (redisNoteCollection != null)
                 {
                     serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
