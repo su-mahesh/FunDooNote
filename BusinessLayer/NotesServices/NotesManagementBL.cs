@@ -112,23 +112,51 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<ResponseNoteModel> GetReminderNotes(long UserID)
+        public async Task<ICollection<ResponseNoteModel>> GetReminderNotes(long UserID)
         {
+            var cacheKey = "ReminderNotes:" + UserID.ToString();
+            string serializedNotes;
+            ICollection<ResponseNoteModel> Notes;
             try
             {
-                return NotesManagementRL.GetReminderNotes(UserID);
+                var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                if (redisNoteCollection != null)
+                {
+                    serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
+                    Notes = JsonConvert.DeserializeObject<List<ResponseNoteModel>>(serializedNotes);
+                }
+                else
+                {
+                    Notes = NotesManagementRL.GetReminderNotes(UserID);
+                    await AddRedisCache(cacheKey, Notes);
+                }
+                return Notes;
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        public ICollection<ResponseNoteModel> GetTrashNotes(long UserID)
+        public async Task<ICollection<ResponseNoteModel>> GetTrashNotes(long UserID)
         {
+
+            var cacheKey = "ReminderNotes:" + UserID.ToString();
+            string serializedNotes;
+            ICollection<ResponseNoteModel> Notes;
             try
             {
-                return NotesManagementRL.GetNotes(UserID, true, false);
+                var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                if (redisNoteCollection != null)
+                {
+                    serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
+                    Notes = JsonConvert.DeserializeObject<List<ResponseNoteModel>>(serializedNotes);
+                }
+                else
+                {
+                    Notes = NotesManagementRL.GetNotes(UserID, true, false);
+                    await AddRedisCache(cacheKey, Notes);
+                }
+                return Notes;
             }
             catch (Exception)
             {
@@ -239,6 +267,8 @@ namespace BusinessLayer.NotesServices
             var cacheKey = "ActiveNotes:" + UserID.ToString();
             await distributedCache.RemoveAsync(cacheKey);
             cacheKey = "ArchiveNotes:" + UserID.ToString();
+            await distributedCache.RemoveAsync(cacheKey);
+            cacheKey = "ReminderNotes:" + UserID.ToString();
             await distributedCache.RemoveAsync(cacheKey);
         }
         public async Task AddRedisCache(string cacheKey, object obj)

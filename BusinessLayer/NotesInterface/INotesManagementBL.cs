@@ -12,10 +12,10 @@ namespace BusinessLayer.NotesInterface
         public Task<ICollection<ResponseNoteModel>> GetActiveNotes(long UserID);
         public ResponseNoteModel AddUserNote(ResponseNoteModel note);
         Task<ICollection<ResponseNoteModel>> GetArchiveNotes(long userID);
-        ICollection<ResponseNoteModel> GetTrashNotes(long userID);
+        Task<ICollection<ResponseNoteModel>> GetTrashNotes(long userID);
         Task<bool> DeleteNote(long UserID, long noteID);
         Task<ResponseNoteModel> UpdateNote(ResponseNoteModel note);
-        ICollection<ResponseNoteModel> GetReminderNotes(long userID);
+        Task<ICollection<ResponseNoteModel>> GetReminderNotes(long userID);
         Task<bool> ToggleNotePin(long noteID, long userID);
         Task<bool> ToggleArchive(long noteID, long userID);
         Task<bool> ChangeBackgroundColor(long noteID, long userID, string colorCode);

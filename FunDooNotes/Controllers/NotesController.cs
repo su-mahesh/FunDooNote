@@ -97,7 +97,7 @@ namespace FundooNotes.Controllers
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
 
-                    var result = notesManagementBL.GetArchiveNotes(UserID);
+                    var result = notesManagementBL.GetArchiveNotes(UserID).Result;
                     return Ok(new { success = true, user = Email, Notes = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -124,7 +124,7 @@ namespace FundooNotes.Controllers
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
 
-                    var result = notesManagementBL.GetTrashNotes(UserID);
+                    var result = notesManagementBL.GetTrashNotes(UserID).Result;
                     return Ok(new { success = true, user = Email, Notes = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
