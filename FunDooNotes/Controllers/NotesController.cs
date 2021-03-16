@@ -333,7 +333,7 @@ namespace FundooNotes.Controllers
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Collaborators.UserID = UserID;
                     bool result = notesManagementBL.UpdateCollaborators(Collaborators);
-                    return Ok(new { success = true, Message = "note reminder added", Note = result });
+                    return Ok(new { success = true, Message = "collaborators updated", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
             }
