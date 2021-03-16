@@ -311,6 +311,28 @@ namespace FundooNotes.Controllers
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Reminder.UserID = UserID;
                     bool result = notesManagementBL.SetNoteReminder(Reminder);
+                    return Ok(new { success = true, Message = "note reminder added" });
+                }
+                return BadRequest(new { success = false, Message = "no user is active please login" });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { success = false, exception.Message });
+            }
+        }
+        [Authorize]
+        [HttpPatch("UpdateCollaborators")]
+        public IActionResult UpdateCollaborators(AddCollaboratorsModel Collaborators)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims;
+                    long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
+                    Collaborators.UserID = UserID;
+                    bool result = notesManagementBL.UpdateCollaborators(Collaborators);
                     return Ok(new { success = true, Message = "note reminder added", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });

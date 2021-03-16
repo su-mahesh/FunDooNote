@@ -181,5 +181,18 @@ namespace BusinessLayer.NotesServices
                 throw;
             }           
         }
+
+        public bool UpdateCollaborators(AddCollaboratorsModel collaborators)
+        {
+            try
+            {
+                return NotesManagementRL.UpdateCollaborators(collaborators);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

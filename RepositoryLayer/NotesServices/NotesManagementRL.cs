@@ -369,5 +369,39 @@ namespace RepositoryLayer.NotesServises
                 throw;
             }
         }
+
+        public bool UpdateCollaborators(AddCollaboratorsModel collaborators)
+        {
+            try
+            {
+
+                        NotesDB.Collaborators.RemoveRange(
+                            NotesDB.Collaborators.Where(n => n.NoteId == collaborators.NoteID));                      
+                    NotesDB.SaveChanges();
+                    if (collaborators.Collaborators != null)
+                    {
+                        foreach (var collaborator in collaborators.Collaborators)
+                        {
+                            NotesDB.Collaborators.Add(
+                                new Collaborator
+                                {
+                                    UserId = collaborators.UserID,
+                                    NoteId = collaborators.NoteID,
+                                    CollaboratorEmail = collaborator
+                                });
+                        }
+                        NotesDB.SaveChanges();
+                    
+                   
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return false;
+        }
     }
 }
