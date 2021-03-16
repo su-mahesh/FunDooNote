@@ -21,12 +21,10 @@ namespace FundooNotes.Controllers
     public class NotesController : Controller
     {
         readonly INotesManagementBL notesManagementBL;
-        private readonly IDistributedCache distributedCache;
 
         public NotesController(INotesManagementBL notesManagementBL, IDistributedCache distributedCache)
         {
             this.notesManagementBL = notesManagementBL;
-            this.distributedCache = distributedCache;
         }
         /// <summary>
         /// Gets the all active notes.
@@ -152,7 +150,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
-                    bool result = notesManagementBL.DeleteNote(UserID, NoteID);
+                    bool result = notesManagementBL.DeleteNote(UserID, NoteID).Result;
                     return Ok(new { success = true, user = Email, Message = "note deleted" });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -206,7 +204,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Note.UserID = UserID;
-                    ResponseNoteModel result = notesManagementBL.UpdateNote(Note);
+                    ResponseNoteModel result = notesManagementBL.UpdateNote(Note).Result;
                     return Ok(new { success = true, Message =  "note updated", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -232,7 +230,7 @@ namespace FundooNotes.Controllers
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
-                    bool result = notesManagementBL.ToggleNotePin(NoteID, UserID);
+                    bool result = notesManagementBL.ToggleNotePin(NoteID, UserID).Result;
                     return Ok(new { success = true, Message = "note pin toggled", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -258,7 +256,7 @@ namespace FundooNotes.Controllers
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
-                    bool result = notesManagementBL.ToggleArchive(NoteID, UserID);
+                    bool result = notesManagementBL.ToggleArchive(NoteID, UserID).Result;
                     return Ok(new { success = true, Message = "note archive toggled", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -285,7 +283,7 @@ namespace FundooNotes.Controllers
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
-                    bool result = notesManagementBL.ChangeBackgroundColor(NoteID, UserID, ColorCode);
+                    bool result = notesManagementBL.ChangeBackgroundColor(NoteID, UserID, ColorCode).Result;
                     return Ok(new { success = true, Message = "note background color changed", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -312,7 +310,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Reminder.UserID = UserID;
-                    bool result = notesManagementBL.SetNoteReminder(Reminder);
+                    bool result = notesManagementBL.SetNoteReminder(Reminder).Result;
                     return Ok(new { success = true, Message = "note reminder added" });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -334,7 +332,7 @@ namespace FundooNotes.Controllers
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     Collaborators.UserID = UserID;
-                    bool result = notesManagementBL.UpdateCollaborators(Collaborators);
+                    bool result = notesManagementBL.UpdateCollaborators(Collaborators).Result;
                     return Ok(new { success = true, Message = "collaborators updated", Note = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });

@@ -46,11 +46,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public bool DeleteNote(long UserID, long noteID)
+        public async Task<bool> DeleteNote(long UserID, long noteID)
         {
             try
             {
-                RemoveActiveNotesRedisCache(UserID);
+                await RemoveNotesRedisCache(UserID);
                 bool result = NotesManagementRL.DeleteNote(UserID, noteID);
                 return result;
             }
@@ -76,13 +76,7 @@ namespace BusinessLayer.NotesServices
                 else
                 {
                     Notes = NotesManagementRL.GetNotes(UserID, false, false);
-                    var s = Notes.ToString();
-                    serializedNotes = JsonConvert.SerializeObject(Notes);
-                    redisNoteCollection = Encoding.UTF8.GetBytes(serializedNotes);
-                    var options = new DistributedCacheEntryOptions()
-                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                    await distributedCache.SetAsync(cacheKey, redisNoteCollection);
+                    await AddRedisCache(cacheKey, Notes);
                 }
                 return Notes;
             }
@@ -92,11 +86,25 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public ICollection<ResponseNoteModel> GetArchiveNotes(long UserID)
+        public async Task<ICollection<ResponseNoteModel>> GetArchiveNotes(long UserID)
         {
+            var cacheKey = "ArchiveNotes:" + UserID.ToString();
+            string serializedNotes;
+            ICollection<ResponseNoteModel> Notes;
             try
             {
-                return NotesManagementRL.GetNotes(UserID, false, true);
+                var redisNoteCollection = await distributedCache.GetAsync(cacheKey);
+                if (redisNoteCollection != null)
+                {
+                    serializedNotes = Encoding.UTF8.GetString(redisNoteCollection);
+                    Notes = JsonConvert.DeserializeObject<List<ResponseNoteModel>>(serializedNotes);
+                }
+                else
+                {
+                    Notes = NotesManagementRL.GetNotes(UserID, false, true);
+                    await AddRedisCache(cacheKey, Notes);
+                }
+                return Notes;
             }
             catch (Exception)
             {
@@ -128,11 +136,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public bool ToggleArchive(long noteID, long userID)
+        public async Task<bool> ToggleArchive(long noteID, long userID)
         {
             try
             {
-                RemoveActiveNotesRedisCache(userID);
+                await RemoveNotesRedisCache(userID);
                 return NotesManagementRL.ToggleArchive(noteID, userID);
             }
             catch (Exception)
@@ -141,11 +149,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public bool ToggleNotePin(long noteID, long userID)
+        public async Task<bool> ToggleNotePin(long noteID, long userID)
         {
             try
             {
-                RemoveActiveNotesRedisCache(userID);
+                await RemoveNotesRedisCache(userID);
                 return NotesManagementRL.ToggleNotePin(noteID,userID);
             }
             catch (Exception)
@@ -154,11 +162,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public bool ChangeBackgroundColor(long noteID, long userID, string colorCode)
+        public async Task<bool> ChangeBackgroundColor(long noteID, long userID, string colorCode)
         {
             try
             {
-                RemoveActiveNotesRedisCache(userID);
+                await RemoveNotesRedisCache(userID);
                 return NotesManagementRL.ChangeBackgroundColor(noteID, userID, colorCode);
             }
             catch (Exception)
@@ -166,11 +174,11 @@ namespace BusinessLayer.NotesServices
                 throw;
             }
         }
-        public ResponseNoteModel UpdateNote(ResponseNoteModel note)
+        public async Task<ResponseNoteModel> UpdateNote(ResponseNoteModel note)
         {
             try
             {
-                RemoveActiveNotesRedisCache(note.UserID);
+                await RemoveNotesRedisCache(note.UserID);
                 if (note.Labels != null)
                 {
                     note.Labels = note.Labels.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -191,11 +199,11 @@ namespace BusinessLayer.NotesServices
             }
         }
 
-        public bool SetNoteReminder(NoteReminder reminder)
+        public async Task<bool> SetNoteReminder(NoteReminder reminder)
         {
             try
             {
-                RemoveActiveNotesRedisCache(reminder.UserID);
+                await RemoveNotesRedisCache(reminder.UserID);
                 if (reminder.ReminderOn < DateTime.Now)
                 {
                     throw new Exception("Time is passed");
@@ -213,11 +221,11 @@ namespace BusinessLayer.NotesServices
             }           
         }
 
-        public bool UpdateCollaborators(AddCollaboratorsModel collaborators)
+        public async Task<bool> UpdateCollaborators(AddCollaboratorsModel collaborators)
         {
             try
             {
-                RemoveActiveNotesRedisCache(collaborators.UserID);
+                await RemoveNotesRedisCache(collaborators.UserID);
                 return NotesManagementRL.UpdateCollaborators(collaborators);
             }
             catch (Exception)
@@ -226,10 +234,21 @@ namespace BusinessLayer.NotesServices
                 throw;
             }
         }
-        public void RemoveActiveNotesRedisCache(long UserID)
+        public async Task RemoveNotesRedisCache(long UserID)
         {
             var cacheKey = "ActiveNotes:" + UserID.ToString();
-            distributedCache.RemoveAsync(cacheKey);
+            await distributedCache.RemoveAsync(cacheKey);
+            cacheKey = "ArchiveNotes:" + UserID.ToString();
+            await distributedCache.RemoveAsync(cacheKey);
+        }
+        public async Task AddRedisCache(string cacheKey, object obj)
+        {
+            string serializedNotes = JsonConvert.SerializeObject(obj);
+            var redisNoteCollection = Encoding.UTF8.GetBytes(serializedNotes);
+            var options = new DistributedCacheEntryOptions()
+                .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+            await distributedCache.SetAsync(cacheKey, redisNoteCollection, options);
         }
     }
 }

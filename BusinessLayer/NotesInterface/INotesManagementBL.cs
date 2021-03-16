@@ -11,15 +11,15 @@ namespace BusinessLayer.NotesInterface
     {
         public Task<ICollection<ResponseNoteModel>> GetActiveNotes(long UserID);
         public ResponseNoteModel AddUserNote(ResponseNoteModel note);
-        ICollection<ResponseNoteModel> GetArchiveNotes(long userID);
+        Task<ICollection<ResponseNoteModel>> GetArchiveNotes(long userID);
         ICollection<ResponseNoteModel> GetTrashNotes(long userID);
-        bool DeleteNote(long UserID, long noteID);
-        ResponseNoteModel UpdateNote(ResponseNoteModel note);
+        Task<bool> DeleteNote(long UserID, long noteID);
+        Task<ResponseNoteModel> UpdateNote(ResponseNoteModel note);
         ICollection<ResponseNoteModel> GetReminderNotes(long userID);
-        bool ToggleNotePin(long noteID, long userID);
-        bool ToggleArchive(long noteID, long userID);
-        bool ChangeBackgroundColor(long noteID, long userID, string colorCode);
-        bool SetNoteReminder(NoteReminder reminder);
-        bool UpdateCollaborators(AddCollaboratorsModel collaborators);
+        Task<bool> ToggleNotePin(long noteID, long userID);
+        Task<bool> ToggleArchive(long noteID, long userID);
+        Task<bool> ChangeBackgroundColor(long noteID, long userID, string colorCode);
+        Task<bool> SetNoteReminder(NoteReminder reminder);
+        Task<bool> UpdateCollaborators(AddCollaboratorsModel collaborators);
     }
 }
