@@ -50,8 +50,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
-                var cacheKey = UserID.ToString() + "ActiveNotes";
-                distributedCache.RemoveAsync(cacheKey);
+                RemoveActiveNotesRedisCache(UserID);
                 bool result = NotesManagementRL.DeleteNote(UserID, noteID);
                 return result;
             }
@@ -63,7 +62,7 @@ namespace BusinessLayer.NotesServices
 
         public async Task<ICollection<ResponseNoteModel>> GetActiveNotes(long UserID)
         {
-            var cacheKey = UserID.ToString()+ "ActiveNotes";
+            var cacheKey = "ActiveNotes:" + UserID.ToString();
             string serializedNotes;
             ICollection<ResponseNoteModel> Notes;
             try
@@ -77,6 +76,7 @@ namespace BusinessLayer.NotesServices
                 else
                 {
                     Notes = NotesManagementRL.GetNotes(UserID, false, false);
+                    var s = Notes.ToString();
                     serializedNotes = JsonConvert.SerializeObject(Notes);
                     redisNoteCollection = Encoding.UTF8.GetBytes(serializedNotes);
                     var options = new DistributedCacheEntryOptions()
@@ -132,6 +132,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                RemoveActiveNotesRedisCache(userID);
                 return NotesManagementRL.ToggleArchive(noteID, userID);
             }
             catch (Exception)
@@ -144,6 +145,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                RemoveActiveNotesRedisCache(userID);
                 return NotesManagementRL.ToggleNotePin(noteID,userID);
             }
             catch (Exception)
@@ -156,6 +158,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                RemoveActiveNotesRedisCache(userID);
                 return NotesManagementRL.ChangeBackgroundColor(noteID, userID, colorCode);
             }
             catch (Exception)
@@ -167,6 +170,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                RemoveActiveNotesRedisCache(note.UserID);
                 if (note.Labels != null)
                 {
                     note.Labels = note.Labels.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -191,6 +195,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                RemoveActiveNotesRedisCache(reminder.UserID);
                 if (reminder.ReminderOn < DateTime.Now)
                 {
                     throw new Exception("Time is passed");
@@ -212,6 +217,7 @@ namespace BusinessLayer.NotesServices
         {
             try
             {
+                RemoveActiveNotesRedisCache(collaborators.UserID);
                 return NotesManagementRL.UpdateCollaborators(collaborators);
             }
             catch (Exception)
@@ -219,6 +225,11 @@ namespace BusinessLayer.NotesServices
 
                 throw;
             }
+        }
+        public void RemoveActiveNotesRedisCache(long UserID)
+        {
+            var cacheKey = "ActiveNotes:" + UserID.ToString();
+            distributedCache.RemoveAsync(cacheKey);
         }
     }
 }
