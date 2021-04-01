@@ -18,6 +18,7 @@ namespace FundooNotes.Controllers
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class NotesController : Controller
     {
         readonly INotesManagementBL notesManagementBL;
@@ -30,20 +31,19 @@ namespace FundooNotes.Controllers
         /// Gets the all active notes.
         /// </summary>
         /// <returns></returns>
-        [Authorize]
+      
         [HttpGet]
         public IActionResult GetActiveNotes()
         {
             try
             {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
+                if (User.Identity is ClaimsIdentity identity)
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);
                     string Email = claims.Where(p => p.Type == "Email").FirstOrDefault()?.Value;
 
-                    var result =  notesManagementBL.GetActiveNotes(UserID);
+                    var result = notesManagementBL.GetActiveNotes(UserID);
                     return Ok(new { success = true, user = Email, Notes = result });
                 }
                 return BadRequest(new { success = false, Message = "no user is active please login" });
@@ -64,8 +64,7 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
+                if (User.Identity is ClaimsIdentity identity)
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     long UserID = Convert.ToInt64(claims.Where(p => p.Type == "UserID").FirstOrDefault()?.Value);

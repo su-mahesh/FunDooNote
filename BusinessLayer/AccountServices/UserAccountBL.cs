@@ -91,8 +91,7 @@ namespace BusinessLayer.Services
         {
             try
             {
-                if (user.NewPassword.Equals(user.ConfirmNewPassword) &&
-                    userDetailValidation.ValidatePassword(user.NewPassword))
+                if ( userDetailValidation.ValidatePassword(user.NewPassword))
                 {
                     return userAccountRL.ResetAccountPassword(user);
                 }

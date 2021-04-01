@@ -1,24 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using BusinessLayer.Interfaces;
-using CommonLayer.RequestModel;
-using CommonLayer.ResponseModel;
-using BusinessLayer.JWTAuthentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="AccountController.cs" company="Company">
+// Copyright (c) Company. All rights reserved.
+// </copyright>
+// <author>FirstName LastName</author>
+//-----------------------------------------------------------------------
 namespace BusinessLayer.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Security.Claims;
+    using BusinessLayer.Interfaces;
+    using CommonLayer.RequestModel;
+    using CommonLayer.ResponseModel;
+    using BusinessLayer.JWTAuthentication;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Cors;
+
     /// <summary>
     /// Manage account Register, Login, Reset Password
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [ApiController]
-    [Route("[controller]")] 
+    [Route("[controller]")]
+    [EnableCors("AllowOrigin")]
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration config;  
@@ -28,7 +35,7 @@ namespace BusinessLayer.Controllers
         public AccountController(IUserAccountBL userAccountBL, IConfiguration config)
         {
             this.config = config;
-            userAuthentication = new UserAuthenticationJWT(this.config);
+            this.userAuthentication = new UserAuthenticationJWT(this.config);
             this.userAccountBL = userAccountBL;
         }
 
@@ -36,7 +43,7 @@ namespace BusinessLayer.Controllers
         /// Registers the user.
         /// </summary>
         /// <param name="user">The user.</param>
-        /// <returns></returns>
+        /// <returns>IActionResult</returns>
         [HttpPost("RegisterUser")]
         public IActionResult RegisterUser(RegisterUserAccount user)
         {
@@ -99,7 +106,10 @@ namespace BusinessLayer.Controllers
         /// </summary>
         /// <param name="resetPasswordModel">The reset password model.</param>
         /// <returns></returns>
+        /// 
+
         [Authorize]
+       
         [HttpPost("ResetPassword")]
         public IActionResult ResetPassword(ResetPasswordModel resetPasswordModel)
         {

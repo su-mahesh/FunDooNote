@@ -10,7 +10,5 @@ namespace CommonLayer.RequestModel
         public string Email { get; set; }
         [Required]
         public string NewPassword { get; set; }
-        [Required]
-        public string ConfirmNewPassword { get; set; }
     }
 }

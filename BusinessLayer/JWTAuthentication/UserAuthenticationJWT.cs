@@ -26,7 +26,7 @@ namespace BusinessLayer.JWTAuthentication
         /// <returns></returns>
         public string GenerateSessionJWT(ResponseUserAccount userInfo)
         {
-            DateTime ExpireTime = DateTime.Now.AddHours(2);
+            DateTime ExpireTime = DateTime.Now.AddMinutes(120);
             return GenerateJSONWebToken(userInfo, ExpireTime);
         }
         /// <summary>
@@ -50,6 +50,7 @@ namespace BusinessLayer.JWTAuthentication
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             IEnumerable<Claim> Claims = new Claim[] {
+           //     new Clain("FundooNotes", "Notes");
                 new Claim("UserID", userInfo.UserID.ToString()),
                 new Claim("Email", userInfo.Email) };
 
@@ -59,6 +60,5 @@ namespace BusinessLayer.JWTAuthentication
               signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        }
+    }
 }
