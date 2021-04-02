@@ -135,7 +135,7 @@ namespace RepositoryLayer.NotesServises
             try
             {
                 responseNoteModels = NotesDB.Notes.Where(N => N.UserId.Equals(UserID) 
-                && N.IsTrash == IsTrash && N.IsArchive == IsArchieve).OrderBy(N => N.CreatedOn).Select(N =>
+                && N.IsTrash == IsTrash && N.IsArchive == IsArchieve).OrderByDescending(N => N.CreatedOn).Select(N =>
                     new ResponseNoteModel
                     {
                         UserID = (long)N.UserId,

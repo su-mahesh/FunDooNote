@@ -27,6 +27,9 @@ namespace BusinessLayer.NotesServices
 
         public ResponseNoteModel AddUserNote(ResponseNoteModel note)
         {
+            return AddUserNoteTask(note).Result;
+        }
+        public async Task<ResponseNoteModel> AddUserNoteTask(ResponseNoteModel note) {
             try
             {
                 if (note.Labels != null)
@@ -41,6 +44,7 @@ namespace BusinessLayer.NotesServices
                 {
                     note.IsPin = false;
                 }
+                await redis.RemoveNotesRedisCache(note.UserID);
                 return NotesManagementRL.AddUserNote(note);
             }
             catch (Exception)
